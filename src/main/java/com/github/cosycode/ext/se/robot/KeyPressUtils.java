@@ -56,6 +56,9 @@ public class KeyPressUtils {
 
     /**
      * shift+ 按键
+     * @param r     Robot 实例对象
+     * @param key   按键键码值
+     * @param delay 按键之后延迟时间(毫秒)
      */
     public static void keyPressWithShift(Robot r, int key, int delay){
         r.keyPress(KeyEvent.VK_SHIFT);
@@ -67,6 +70,9 @@ public class KeyPressUtils {
 
     /**
      * ctrl+ 按键
+     * @param r     Robot 实例对象
+     * @param key   按键键码值
+     * @param delay 按键之后延迟时间(毫秒)
      */
     public static void keyPressWithCtrl(Robot r, int key, int delay){
         r.keyPress(KeyEvent.VK_CONTROL);
@@ -78,6 +84,9 @@ public class KeyPressUtils {
 
     /**
      * alt+ 按键
+     * @param r     Robot 实例对象
+     * @param key   按键键码值
+     * @param delay 按键之后延迟时间(毫秒)
      */
     public static void keyPressWithAlt(Robot r, int key, int delay){
         r.keyPress(KeyEvent.VK_ALT);

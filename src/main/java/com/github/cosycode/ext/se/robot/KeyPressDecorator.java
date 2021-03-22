@@ -1,13 +1,14 @@
 package com.github.cosycode.ext.se.robot;
 
 import com.github.cosycode.common.ext.hub.SimpleCode;
-import com.github.cosycode.common.thread.AsynchronousProcessorOld;
+import com.github.cosycode.common.thread.AsynchronousProcessor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
+import java.util.function.Consumer;
 
 /**
  * <b>Description : </b>
@@ -22,13 +23,16 @@ public class KeyPressDecorator {
     @Getter
     private Robot robot;
 
-    private CharsetEncoder charsetEncoder = Charset.forName("GBK").newEncoder();
+    private final CharsetEncoder charsetEncoder = Charset.forName("GBK").newEncoder();
 
     @Getter
-    private AsynchronousProcessorOld<Character> asynchronousProcessor = new AsynchronousProcessorOld<>(ch -> {
-        SimpleCode.ignoreException(() -> KeyPressUtils.keyPressWithString(robot, ch, charsetEncoder, -1));
-        return true;
-    }, 10);
+    private final AsynchronousProcessor<Character> asynchronousProcessor;
+
+    {
+        final Consumer<Character> characterPredicate = ch -> SimpleCode.ignoreException(() -> KeyPressUtils.keyPressWithString(robot, ch, charsetEncoder, -1));
+        asynchronousProcessor = AsynchronousProcessor.ofConsumer(characterPredicate).setName("KeyPressDecorator-Default");
+        asynchronousProcessor.start();
+    }
 
     public KeyPressDecorator(Robot robot) {
         this.robot = robot;
