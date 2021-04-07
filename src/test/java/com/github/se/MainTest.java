@@ -1,57 +1,44 @@
 package com.github.se;
 
 import com.github.cosycode.common.util.io.FileSystemUtils;
+import com.github.cosycode.common.util.io.IoUtils;
+import org.junit.Test;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class MainTest {
 
+    @Test
     public void main() throws FileNotFoundException {
-        FileSystemUtils.fileDisposeFromDir(new File("C:\\Users\\Private\\read-now\\red"), file -> {
+        FileSystemUtils.fileDisposeFromDir(new File("C:\\Users\\Private\\read\\red"), file -> {
             try {
-                System.out.println(new FileReader(file).getEncoding());
+                final String encoding = codeString(file);
+                System.out.println(encoding + " ==> " + new FileReader(file).getEncoding() + " -- " + file.getName());
+                if (encoding.equals("UTF-8")) {
+
+                    final String s1 = IoUtils.readStringFromInputStream(new FileInputStream(file), StandardCharsets.UTF_8);
+                    IoUtils.writeStringToOutputStream(new FileOutputStream(file), s1, Charset.forName("GBK"));
+                }
+
             } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }, null);
-
-    }
-
-
-    /**
-     * 输入流转String
-     *
-     * @param inputStream 输入流
-     * @param charset 编码
-     * @return 转换的字符串
-     */
-    public static String readStringFromInputStream(InputStream inputStream, Charset charset) throws IOException {
-        try (InputStreamReader inputStreamReader = charset == null ?
-                new InputStreamReader(inputStream) : new InputStreamReader(inputStream, charset)) {
-            //字符缓冲流
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            //字符串缓冲区
-            StringBuilder stringBuilder = new StringBuilder();
-            String len;
-            //按行读
-            while((len=bufferedReader.readLine()) != null){
-                //追加到字符串缓冲区存放
-                stringBuilder.append(len);
-            }
-            //将字符串返回
-            return stringBuilder.toString();
-        }
     }
 
     /**
      * 判断文件的编码格式
+     *
      * @param fileName :file
      * @return 文件编码格式
      * @throws Exception
      */
-    public static String codeString(File fileName){
-        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fileName))){
+    public static String codeString(File fileName) {
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fileName))) {
             String charset = "GBK";
             byte[] first3Bytes = new byte[3];
             boolean checked = false;

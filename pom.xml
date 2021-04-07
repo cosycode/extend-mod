@@ -34,7 +34,7 @@
     <developers>
         <developer>
             <name>sinjar</name>
-            <email>2484661388@qq.com</email>
+            <email>sinjar.chen@qq.com</email>
             <timezone>+8</timezone>
         </developer>
     </developers>
@@ -50,7 +50,7 @@
         <dependency>
             <groupId>com.github.cosycode</groupId>
             <artifactId>common-lang</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>1.4-SNAPSHOT</version>
         </dependency>
         <!-- compile & log & test -->
         <dependency>
@@ -84,9 +84,14 @@
             <version>3.15</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.jayway.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>1.7.0</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
-
 
     <profiles>
         <profile>

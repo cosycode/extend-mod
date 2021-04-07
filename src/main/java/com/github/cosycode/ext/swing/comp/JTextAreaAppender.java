@@ -33,10 +33,10 @@ import java.io.Serializable;
  * 若此类失效, 则看下配置文件是否被正确读入, 编译classpath路径下是否有log4j文件
  */
 @Plugin(name = "JTextAreaAppender", category = "Core", elementType = "appender", printObject = true)
-public final class JTextAreaAppender extends AbstractAppender {
+public class JTextAreaAppender extends AbstractAppender {
 
     @Getter
-    private final JTextPane jTextPane;
+    protected final JTextPane jTextPane;
 
     protected JTextAreaAppender(String name, Filter filter, Layout<? extends Serializable> layout,
                                 final boolean ignoreExceptions, JTextPane jTextPane) {
@@ -82,7 +82,7 @@ public final class JTextAreaAppender extends AbstractAppender {
     }
 
     @Setter
-    private static JTextPane defaultJTextPane;
+    protected static JTextPane defaultJTextPane;
 
     /**
      * log4j2 使用 appender 插件工厂，因此传参可以直接通过 PluginAttribute 注解注入

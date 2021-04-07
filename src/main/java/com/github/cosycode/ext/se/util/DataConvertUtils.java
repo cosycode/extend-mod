@@ -1,5 +1,6 @@
 package com.github.cosycode.ext.se.util;
 
+import com.github.cosycode.common.util.io.FileSystemUtils;
 import com.github.cosycode.common.util.io.IoUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -51,9 +52,13 @@ public class DataConvertUtils {
     public static void base64ToFile(String base64, String savePath) throws IOException {
         Validate.isTrue(StringUtils.isNotBlank(base64), "base64字符串不能为空");
         Validate.isTrue(StringUtils.isNotBlank(savePath), "存储路径savePath不能为空");
-        IoUtils.insureFileExist(new File(savePath));
+        FileSystemUtils.insureFileExist(new File(savePath));
         byte[] bytes = Base64.getDecoder().decode(base64);
         IoUtils.writeFile(savePath, bytes);
+    }
+
+    public static void onceExe(Runnable runnable) {
+
     }
 
 
