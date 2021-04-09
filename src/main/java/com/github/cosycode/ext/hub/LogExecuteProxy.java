@@ -1,10 +1,6 @@
 package com.github.cosycode.ext.hub;
 
-import lombok.Setter;
-
 import java.util.Arrays;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
 
 /**
@@ -17,22 +13,12 @@ import java.util.function.BiFunction;
  **/
 public class LogExecuteProxy<T, P, R> extends AbstractClosureProxy<T, P, R>{
 
-    private final Lock lock = new ReentrantLock();
-
-    @Setter
-    private T skip;
-
     public LogExecuteProxy(T then) {
         super(then);
     }
 
     public LogExecuteProxy(T then, BiFunction<T, P, R> function) {
         super(then, function);
-    }
-
-    public LogExecuteProxy(T then, T skip, BiFunction<T, P, R> function) {
-        super(then, function);
-        this.skip = skip;
     }
 
     @Override
@@ -46,7 +32,7 @@ public class LogExecuteProxy<T, P, R> extends AbstractClosureProxy<T, P, R>{
         } else {
             System.out.println("null");
         }
-        return biFunction.apply(then, params);
+        return biFunction.apply(funExpress, params);
     }
 
 }

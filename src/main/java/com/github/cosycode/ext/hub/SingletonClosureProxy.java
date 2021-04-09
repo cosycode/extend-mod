@@ -1,6 +1,5 @@
 package com.github.cosycode.ext.hub;
 
-import com.github.cosycode.ext.hub.AbstractClosureProxy;
 import lombok.NonNull;
 
 import java.util.function.BiConsumer;
@@ -39,7 +38,7 @@ public class SingletonClosureProxy<T, P, R> extends AbstractClosureProxy<T, P, R
         if (obj == null) {
             synchronized (this) {
                 if (obj == null) {
-                    return biFunction.apply(then, params);
+                    return biFunction.apply(funExpress, params);
                 }
             }
         }

@@ -2,6 +2,7 @@ package com.github.cosycode.ext.hub;
 
 import lombok.NonNull;
 
+import java.awt.event.ActionListener;
 import java.util.function.*;
 
 /**
@@ -21,25 +22,25 @@ public abstract class AbstractClosureProxy<T, P, R> {
     /**
      * 代理方法的函数式接口实例
      */
-    protected final T then;
+    protected final T funExpress;
 
     /**
      * 函数式接口 then 对传入参数的操作函数, 如果该项为 null, 则默认
      */
     protected final BiFunction<T, P, R> biFunction;
 
-    protected AbstractClosureProxy(@NonNull T then) {
-        this.then = then;
-        biFunction = geneDefaultBiFunction(then);
+    protected AbstractClosureProxy(@NonNull T funExpress) {
+        this.funExpress = funExpress;
+        biFunction = geneDefaultBiFunction(funExpress);
     }
 
-    protected AbstractClosureProxy(@NonNull T then, @NonNull BiFunction<T, P, R> function) {
-        this.then = then;
+    protected AbstractClosureProxy(@NonNull T funExpress, @NonNull BiFunction<T, P, R> function) {
+        this.funExpress = funExpress;
         this.biFunction = function;
     }
 
-    protected AbstractClosureProxy(@NonNull T then, @NonNull BiConsumer<T, P> biConsumer) {
-        this.then = then;
+    protected AbstractClosureProxy(@NonNull T funExpress, @NonNull BiConsumer<T, P> biConsumer) {
+        this.funExpress = funExpress;
         this.biFunction = (t, p) -> {
             biConsumer.accept(t, p);
             return null;
@@ -72,6 +73,10 @@ public abstract class AbstractClosureProxy<T, P, R> {
         closureFunction(null);
     }
 
+    public P closureUnaryOperator(P params) {
+        return (P) closureFunction(params);
+    }
+
     /**
      * 根据 then 返回默认的闭包代理方法
      *
@@ -79,54 +84,62 @@ public abstract class AbstractClosureProxy<T, P, R> {
      */
     @SuppressWarnings("unchecked")
     public T proxy() {
-        if (then instanceof Consumer) {
+        if (funExpress instanceof Consumer || funExpress instanceof ActionListener) {
             final Consumer<P> proxy = this::closureConsumer;
             return (T) proxy;
-        } else if (then instanceof Function) {
+        } else if (funExpress instanceof UnaryOperator) {
+            final UnaryOperator<P> proxy = this::closureUnaryOperator;
+            return (T) proxy;
+        } else if (funExpress instanceof Function) {
             final Function<P, R> proxy = this::closureFunction;
             return (T) proxy;
-        } else if (then instanceof Supplier) {
+        } else if (funExpress instanceof Supplier) {
             final Supplier<R> proxy = this::closureSupplier;
             return (T) proxy;
-        } else if (then instanceof Runnable) {
+        } else if (funExpress instanceof Runnable) {
             final Runnable proxy = this::closureRunnable;
             return (T) proxy;
         }
-        throw new IllegalArgumentException("OnceExecuteProxy 的参数必须是支持的函数式接口");
+        throw new IllegalArgumentException("参数 funExpress 必须是支持的函数式接口");
     }
+
 
     /**
      * 根据函数式接口实例, 生成默认的针对(函数接口then调用的处理方式)的处理函数
      *
-     * @param then 函数式接口实例
+     * @param funExpress 函数式接口实例
      * @return 函数接口then调用的处理方式 的处理函数
      */
     @SuppressWarnings("unchecked")
-    private BiFunction<T, P, R> geneDefaultBiFunction(T then) {
-        if (then instanceof Consumer) {
+    private BiFunction<T, P, R> geneDefaultBiFunction(T funExpress) {
+        if (funExpress instanceof Consumer) {
             return (t, p) -> {
                 Consumer<P> consumer = (Consumer<P>) t;
                 consumer.accept(p);
                 return null;
             };
-        } else if (then instanceof Function) {
+        } else if (funExpress instanceof UnaryOperator) {
+            return (t, p) -> {
+                UnaryOperator<P> consumer = (UnaryOperator<P>) t;
+                return (R) consumer.apply(p);
+            };
+        } else if (funExpress instanceof Function) {
             return (t, p) -> {
                 Function<P, R> consumer = (Function<P, R>) t;
-                consumer.apply(p);
-                return null;
+                return consumer.apply(p);
             };
-        } else if (then instanceof Supplier) {
+        } else if (funExpress instanceof Supplier) {
             return (t, p) -> {
                 Supplier<R> supplier = ((Supplier<R>) t);
                 return supplier.get();
             };
-        } else if (then instanceof Runnable) {
+        } else if (funExpress instanceof Runnable) {
             return (t, p) -> {
                 ((Runnable) t).run();
                 return null;
             };
         }
-        throw new IllegalArgumentException("OnceExecuteProxy 的参数必须是支持的函数式接口");
+        throw new IllegalArgumentException("参数 funExpress 必须是支持的函数式接口");
     }
 
 }
