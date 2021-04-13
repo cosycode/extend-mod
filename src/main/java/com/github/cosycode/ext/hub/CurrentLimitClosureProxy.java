@@ -48,7 +48,7 @@ public class CurrentLimitClosureProxy<T, P, R> extends AbstractClosureProxy<T, P
     public R closureFunction(P params) {
         try {
             semaphore.acquire();
-            biFunction.apply(funExpress, params);
+            biFunction.apply(functional, params);
         } catch (InterruptedException e) {
             log.error("获取信号失败 params: " + params, e);
             Thread.currentThread().interrupt();

@@ -5,8 +5,12 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
+import java.io.Serializable;
+import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.*;
 
 /**
@@ -71,5 +75,26 @@ public class LambdaUtils {
             }
         }
     }
+
+    private static Map<Class<?>, SerializedLambda> CLASS_LAMBDA_CACHE = new ConcurrentHashMap<>();
+
+    /**
+     * 关键在于这个方法
+     */
+    public static SerializedLambda getSerializedLambda(Serializable fn) {
+        SerializedLambda lambda = CLASS_LAMBDA_CACHE.get(fn.getClass());
+        if(lambda == null) {
+            try {
+                Method method = fn.getClass().getDeclaredMethod("writeReplace");
+                method.setAccessible(Boolean.TRUE);
+                lambda = (SerializedLambda) method.invoke(fn);
+                CLASS_LAMBDA_CACHE.put(fn.getClass(), lambda);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return lambda;
+    }
+
 
 }

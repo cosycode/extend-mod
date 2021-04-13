@@ -4,10 +4,11 @@ import lombok.NonNull;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 /**
- * <b>Description : </b> 闭包代理单例模式
- * <p>
+ * <b>Description : </b> 闭包代理单例模式:
+ * <p> 作用是 将一个原本不是单例的方法 在经过代理后变成单例方法.
  * <b>created in </b> 2021/4/6
  *
  * @author CPF
@@ -38,10 +39,17 @@ public class SingletonClosureProxy<T, P, R> extends AbstractClosureProxy<T, P, R
         if (obj == null) {
             synchronized (this) {
                 if (obj == null) {
-                    return biFunction.apply(funExpress, params);
+                    final R apply = biFunction.apply(functional, params);
+                    obj = apply;
+                    return apply;
                 }
             }
         }
         return obj;
     }
+
+    public static <R> Supplier<R> of(Supplier<R> supplier) {
+        return new SingletonClosureProxy<>(supplier).proxy();
+    }
+
 }

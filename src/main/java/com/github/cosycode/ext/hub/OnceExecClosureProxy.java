@@ -41,8 +41,8 @@ public class OnceExecClosureProxy<T, P, R> extends AbstractClosureProxy<T, P, R>
     public R closureFunction(P params) {
         if (lock.tryLock()) {
             try {
-                if (funExpress != null) {
-                    return biFunction.apply(funExpress, params);
+                if (functional != null) {
+                    return biFunction.apply(functional, params);
                 }
             } finally {
                 lock.unlock();
@@ -57,26 +57,6 @@ public class OnceExecClosureProxy<T, P, R> extends AbstractClosureProxy<T, P, R>
 
     public static <T> T of(T then) {
         return new OnceExecClosureProxy<>(then).proxy();
-    }
-
-    public static <T, P, R> T of(T then, BiFunction<T, P, R> function) {
-        return new OnceExecClosureProxy<>(then, function).proxy();
-    }
-
-    public static <T, P> T of(T then, BiConsumer<T, P> biConsumer) {
-        return new OnceExecClosureProxy<>(then, biConsumer).proxy();
-    }
-
-    public static <T> T of(T then, T skip) {
-        return new OnceExecClosureProxy<>(then).skip(skip).proxy();
-    }
-
-    public static <T, P, R> T of(T then, T skip, BiFunction<T, P, R> function) {
-        return new OnceExecClosureProxy<>(then, function).skip(skip).proxy();
-    }
-
-    public static <T, P> T of(T then, T skip, BiConsumer<T, P> biConsumer) {
-        return new OnceExecClosureProxy<>(then, biConsumer).skip(skip).proxy();
     }
 
 }

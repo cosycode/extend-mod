@@ -32,7 +32,7 @@ public class LogExecuteProxy<T, P, R> extends AbstractClosureProxy<T, P, R>{
         } else {
             System.out.println("null");
         }
-        return biFunction.apply(funExpress, params);
+        return biFunction.apply(functional, params);
     }
 
 }

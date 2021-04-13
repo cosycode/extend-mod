@@ -17,11 +17,9 @@ public class MainTest {
                 final String encoding = codeString(file);
                 System.out.println(encoding + " ==> " + new FileReader(file).getEncoding() + " -- " + file.getName());
                 if (encoding.equals("UTF-8")) {
-
                     final String s1 = IoUtils.readStringFromInputStream(new FileInputStream(file), StandardCharsets.UTF_8);
                     IoUtils.writeStringToOutputStream(new FileOutputStream(file), s1, Charset.forName("GBK"));
                 }
-
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {

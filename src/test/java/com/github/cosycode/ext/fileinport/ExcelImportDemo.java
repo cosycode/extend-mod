@@ -4,6 +4,7 @@ import lombok.NonNull;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,27 @@ import java.util.stream.Collectors;
  */
 public class ExcelImportDemo {
 
+    public static class Cindf {
+        public void testCommon() {
+
+        }
+
+        public static void testStatic() {
+
+        }
+    }
+
+    public class Cindf2 {
+        public void testCommon() {
+
+        }
+    }
+
+
+    public static void main(String[] args) {
+        final Method[] declaredMethods = Cindf.class.getDeclaredMethods();
+        System.out.println(declaredMethods);
+    }
 
 
 //    public String importExcel(@NonNull MultipartFile file) throws InvocationTargetException, InstantiationException, IllegalAccessException, IOException {

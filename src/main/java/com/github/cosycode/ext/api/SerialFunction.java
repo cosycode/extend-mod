@@ -1,6 +1,6 @@
 package com.github.cosycode.ext.api;
 
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 /**
  * <b>Description : </b>
@@ -10,5 +10,6 @@ import java.util.function.Supplier;
  * @author CPF
  * @since
  **/
-public interface ISupplier<T> extends Functional, Supplier<T> {
+@FunctionalInterface
+public interface SerialFunction<T, R> extends SerialFunctional, Function<T, R> {
 }
