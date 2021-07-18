@@ -8,16 +8,18 @@ import java.awt.*;
 
 /**
  * <b>Description : </b>
+ * <p>
+ * <b>created in </b> 2020/8/12
+ * </p>
  *
  * @author CPF
- * Date: 2020/8/12 15:44
- */
+ **/
 public class JField extends JPanel implements IValGetter<String> {
 
     @Getter
+    JTextField jTextField;
+    @Getter
     private JLabel jLabel;
-
-    @Getter JTextField jTextField;
 
     public JField(String label) {
         initComponents(label);
@@ -33,10 +35,10 @@ public class JField extends JPanel implements IValGetter<String> {
 
     private void initComponents(String label) {
         final GridBagLayout mgr = new GridBagLayout();
-        mgr.columnWidths = new int[] {0, 0, 0};
-        mgr.rowHeights = new int[] {0, 0};
-        mgr.columnWeights = new double[] {0.0, 0.0, 1.0E-4};
-        mgr.rowWeights = new double[] {0.0, 1.0E-4};
+        mgr.columnWidths = new int[]{0, 0, 0};
+        mgr.rowHeights = new int[]{0, 0};
+        mgr.columnWeights = new double[]{0.0, 0.0, 1.0E-4};
+        mgr.rowWeights = new double[]{0.0, 1.0E-4};
         setLayout(mgr);
 
         jLabel = new JLabel(label);

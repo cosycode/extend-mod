@@ -11,9 +11,8 @@ import java.util.function.BiFunction;
  * <b>created in </b> 2021/4/7
  *
  * @author CPF
- * @since 1.0
  **/
-public class AllClosureProxy <T, P, R> extends AbstractClosureProxy<T, P, R>{
+public class AllClosureProxy<T, P, R> extends AbstractClosureProxy<T, P, R> {
     protected AllClosureProxy(@NonNull T then) {
         super(then);
     }

@@ -8,7 +8,7 @@ import java.util.function.Consumer;
  * <b>created in </b> 2021/4/12
  *
  * @author CPF
- * @since 1.0
+ * @since 0.1.0
  **/
 public interface SerialConsumer<T> extends SerialFunctional, Consumer<T> {
 }

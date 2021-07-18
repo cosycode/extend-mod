@@ -11,9 +11,11 @@ import java.io.IOException;
 
 /**
  * <b>Description : </b>
+ * <p>
+ * <b>created in </b> 2020/11/18
+ * </p>
  *
  * @author CPF
- * @date 2020/11/18 15:33
  **/
 public class JPathTextField extends JTextField {
 

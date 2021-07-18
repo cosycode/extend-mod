@@ -13,20 +13,20 @@ import java.util.function.Consumer;
 /**
  * <b>Description : </b>
  * 参考自: https://vimsky.com/examples/detail/java-method-java.awt.event.KeyEvent.getExtendedKeyCodeForChar.html
+ * <p>
+ * <b>created in </b> 2020/8/6
+ * </p>
  *
  * @author CPF
- * Date: 2020/8/6 14:07
- */
+ **/
 @Slf4j
 public class KeyPressDecorator {
 
-    @Getter
-    private Robot robot;
-
     private final CharsetEncoder charsetEncoder = Charset.forName("GBK").newEncoder();
-
     @Getter
     private final AsynchronousProcessor<Character> asynchronousProcessor;
+    @Getter
+    private Robot robot;
 
     {
         final Consumer<Character> characterPredicate = ch -> SimpleCode.ignoreException(() -> KeyPressUtils.keyPressWithString(robot, ch, charsetEncoder, -1));

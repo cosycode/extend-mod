@@ -14,7 +14,6 @@ import java.util.List;
  * <b>created in </b> 2019/12/16
  *
  * @author CPF
- * @since 1.0
  **/
 public interface DropTargetListenerImpl extends DropTargetListener {
 

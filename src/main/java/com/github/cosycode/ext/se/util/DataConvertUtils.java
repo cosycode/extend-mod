@@ -12,8 +12,13 @@ import java.io.InputStream;
 import java.util.Base64;
 
 /**
- * 提供文件数据的转换
- */
+ * <b>Description : </b> 提供文件数据的转换
+ * <p>
+ * <b>created in </b> 2020/8/6
+ * </p>
+ *
+ * @author CPF
+ **/
 public class DataConvertUtils {
 
     private DataConvertUtils() {
@@ -24,7 +29,6 @@ public class DataConvertUtils {
      *
      * @param file 文件对象
      * @return String base64编码
-     *
      * @throws IOException 文件读取异常 & 文件未发现异常
      */
 
@@ -44,7 +48,7 @@ public class DataConvertUtils {
     /**
      * 将BASE64字符串转换为File文件内容
      *
-     * @param base64 base64位字符串
+     * @param base64   base64位字符串
      * @param savePath 文件存储路径(包含文件名)
      * @throws IOException 写入文件异常
      */

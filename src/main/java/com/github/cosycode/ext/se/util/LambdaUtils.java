@@ -19,10 +19,11 @@ import java.util.function.*;
  * <b>created in </b> 2021/4/7
  *
  * @author CPF
- * @since 1.0
  **/
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LambdaUtils {
+
+    private static Map<Class<?>, SerializedLambda> CLASS_LAMBDA_CACHE = new ConcurrentHashMap<>();
 
     /**
      * 当对象中没有
@@ -76,14 +77,12 @@ public class LambdaUtils {
         }
     }
 
-    private static Map<Class<?>, SerializedLambda> CLASS_LAMBDA_CACHE = new ConcurrentHashMap<>();
-
     /**
      * 关键在于这个方法
      */
     public static SerializedLambda getSerializedLambda(Serializable fn) {
         SerializedLambda lambda = CLASS_LAMBDA_CACHE.get(fn.getClass());
-        if(lambda == null) {
+        if (lambda == null) {
             try {
                 Method method = fn.getClass().getDeclaredMethod("writeReplace");
                 method.setAccessible(Boolean.TRUE);

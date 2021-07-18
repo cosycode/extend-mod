@@ -12,10 +12,12 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 /**
- * <b>Description : </b> 用于一个字段映射对象,
+ * <b>Description : </b> 用于一个字段映射对象
+ * <p>
+ * <b>created in </b> 2019/8/15
+ * </p>
  *
  * @author CPF
- * @date 2019/8/15 15:01
  **/
 public class FieldMapping<T> {
 
@@ -48,21 +50,17 @@ public class FieldMapping<T> {
      */
     @Getter
     private final Object defaultObj;
-
-    /**
-     * 仅用作缓存对象, 防止多次编译
-     */
-    private Pattern pattern;
-
     /**
      * 当字段是一个字典表时, 验证时用 codeItemArray 数组进行验证, 此时 ruleRegex 无效.
      */
     private final String[] codeArr;
     private final String[] textArr;
-
     private final String separator;
-
     private final Function<Object, ?> function;
+    /**
+     * 仅用作缓存对象, 防止多次编译
+     */
+    private Pattern pattern;
 
     public FieldMapping(@NonNull String fieldName, @NonNull Class<T> type, boolean require, String ruleRegex, Object defaultObj) {
         this(fieldName, type, require, ruleRegex, defaultObj, null, null, null, null);

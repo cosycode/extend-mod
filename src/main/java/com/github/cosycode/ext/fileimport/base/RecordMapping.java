@@ -9,9 +9,11 @@ import java.util.stream.Collectors;
 
 /**
  * <b>Description : </b>
+ * <p>
+ * <b>created in </b> 2019/8/15
+ * </p>
  *
  * @author CPF
- * @date 2019/8/15 13:53
  **/
 public class RecordMapping {
 

@@ -9,9 +9,8 @@ import java.util.function.BiFunction;
  * <b>created in </b> 2021/4/6
  *
  * @author CPF
- * @since 1.0
  **/
-public class LogExecuteProxy<T, P, R> extends AbstractClosureProxy<T, P, R>{
+public class LogExecuteProxy<T, P, R> extends AbstractClosureProxy<T, P, R> {
 
     public LogExecuteProxy(T then) {
         super(then);

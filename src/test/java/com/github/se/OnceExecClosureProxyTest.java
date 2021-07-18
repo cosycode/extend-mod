@@ -79,7 +79,6 @@ public class OnceExecClosureProxyTest {
     }
 
 
-
     @Test
     public void test2() {
         OnceExecClosureProxyTest click = new OnceExecClosureProxyTest();
@@ -97,7 +96,7 @@ public class OnceExecClosureProxyTest {
     @Test
     public void test3() {
         OnceExecClosureProxyTest click = new OnceExecClosureProxyTest();
-        final Consumer<String> proxy = new OnceExecClosureProxy<>((Consumer<String>)click::test).proxy();
+        final Consumer<String> proxy = new OnceExecClosureProxy<>((Consumer<String>) click::test).proxy();
         IntStream.range(1, 200).parallel().mapToObj(Integer::toString).forEach(proxy);
     }
 

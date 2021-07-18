@@ -2,10 +2,12 @@ package com.github.cosycode.ext.fileimport.base;
 
 /**
  * <b>Description : </b>
+ * <p>
+ * <b>created in </b> 2020/7/22
+ * </p>
  *
  * @author CPF
- * Date: 2020/7/22 17:42
- */
+ **/
 public enum FileType {
     XLS,
     XLSX;

@@ -8,7 +8,6 @@ import java.util.function.Function;
  * <b>created in </b> 2021/4/9
  *
  * @author CPF
- * @since
  **/
 @FunctionalInterface
 public interface SerialFunction<T, R> extends SerialFunctional, Function<T, R> {

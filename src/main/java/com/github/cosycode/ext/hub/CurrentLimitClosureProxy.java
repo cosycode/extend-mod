@@ -13,10 +13,9 @@ import java.util.function.BiFunction;
  * <b>created in </b> 2021/4/7
  *
  * @author CPF
- * @since 1.2
  **/
 @Slf4j
-public class CurrentLimitClosureProxy<T, P, R> extends AbstractClosureProxy<T, P, R>{
+public class CurrentLimitClosureProxy<T, P, R> extends AbstractClosureProxy<T, P, R> {
 
     private final Semaphore semaphore;
 

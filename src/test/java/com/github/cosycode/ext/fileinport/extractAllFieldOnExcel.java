@@ -25,7 +25,7 @@ public class extractAllFieldOnExcel {
 
         List<ParsedSheetHandler<?>> resultList = new ArrayList<>();
         try (Workbook workbook = ExcelResolver.getMatchWorkbook(ExcelResolver.ExcelType.XLS, fileInputStream);
-                FileWriter writer = new FileWriter(out)) {
+             FileWriter writer = new FileWriter(out)) {
             for (int index = 0, len = workbook.getNumberOfSheets(); index < len; index++) {
                 Sheet sheet = workbook.getSheetAt(index);
                 if (sheet == null) {

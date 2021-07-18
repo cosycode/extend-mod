@@ -6,10 +6,12 @@ import java.io.InputStream;
 
 /**
  * <b>Description : </b>
+ * <p>
+ * <b>created in </b> 2020/7/22
+ * </p>
  *
  * @author CPF
- * Date: 2020/7/22 17:21
- */
+ **/
 public abstract class AbstractFileResolver {
 
     /**

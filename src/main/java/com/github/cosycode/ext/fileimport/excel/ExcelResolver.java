@@ -20,31 +20,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * <b>Description : </b> 解析Excel的工具类,
+ * <b>Description : </b> 解析Excel的工具类
+ * <p>
+ * <b>created in </b> 2019/8/15
+ * </p>
  *
  * @author CPF
- * @date 2019/8/15 13:47
  **/
 @Slf4j
 public class ExcelResolver {
-
-    /**
-     * excel 的类型, 当前类支持解析的 Excel 文件类型枚举类
-     */
-    public enum ExcelType {
-        XLS,
-        XLSX;
-
-        public static ExcelType getByJudgeSuffix(String fileName) {
-            if (fileName.endsWith(".xls")) {
-                return XLS;
-            } else if (fileName.endsWith(".xlsx")) {
-                return XLSX;
-            } else {
-                return null;
-            }
-        }
-    }
 
     /**
      * 判断Excel的版本,获取Workbook
@@ -71,7 +55,7 @@ public class ExcelResolver {
      * @throws InvocationTargetException map转Bean异常
      */
     public static List<ParsedSheetHandler<?>> resolveRecord(@NonNull InputStream is, @NonNull ExcelType excelType,
-                                                         @NonNull Set<Class<? extends AbstractSheetBeanMappingAdapter<?>>> adapterClassSet)
+                                                            @NonNull Set<Class<? extends AbstractSheetBeanMappingAdapter<?>>> adapterClassSet)
             throws IOException, InstantiationException, IllegalAccessException, InvocationTargetException {
         // 初始化适配器
         List<AbstractSheetBeanMappingAdapter<?>> adapters = adapterClassSet.stream().map(it -> {
@@ -89,9 +73,9 @@ public class ExcelResolver {
     /**
      * 使用规定的解析器解析excel文件, 并将解析的结果返回
      *
-     * @param is              excel 文件流
-     * @param excelType       excel 文件类型
-     * @param adapters       适配器 adapters
+     * @param is        excel 文件流
+     * @param excelType excel 文件类型
+     * @param adapters  适配器 adapters
      * @return Excel 解析后的 Map<AbstractSheetBeanMappingAdapter, List<Bean>>
      * @throws IOException               文件流异常
      * @throws InstantiationException    class.newInstants 异常
@@ -133,8 +117,6 @@ public class ExcelResolver {
         }
         return resultList;
     }
-
-
 
     /**
      * 解析单个 sheet
@@ -195,9 +177,9 @@ public class ExcelResolver {
      * 分析一行, 将一行数据解析成一个 Map<String, Object>
      *
      * @param sheetBeanMappingRule 规则
-     * @param sheetName sheet名
-     * @param columnIndexList 有效数据集合
-     * @param sheetRow 行
+     * @param sheetName            sheet名
+     * @param columnIndexList      有效数据集合
+     * @param sheetRow             行
      */
     private static Map<String, Object> analyzeRow(@NonNull RecordMapping sheetBeanMappingRule, String sheetName, List<Integer> columnIndexList, Row sheetRow) {
         Map<String, Object> record = new HashMap<>();
@@ -241,7 +223,6 @@ public class ExcelResolver {
         });
         return record;
     }
-
 
     /**
      * 解析一个单元格
@@ -304,6 +285,25 @@ public class ExcelResolver {
                 return null;
         }
         return null;
+    }
+
+
+    /**
+     * excel 的类型, 当前类支持解析的 Excel 文件类型枚举类
+     */
+    public enum ExcelType {
+        XLS,
+        XLSX;
+
+        public static ExcelType getByJudgeSuffix(String fileName) {
+            if (fileName.endsWith(".xls")) {
+                return XLS;
+            } else if (fileName.endsWith(".xlsx")) {
+                return XLSX;
+            } else {
+                return null;
+            }
+        }
     }
 
 }

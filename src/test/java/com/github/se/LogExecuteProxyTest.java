@@ -1,10 +1,6 @@
 package com.github.se;
 
-import com.github.cosycode.ext.hub.LogExecuteProxy;
 import org.junit.Test;
-
-import java.util.function.Consumer;
-import java.util.stream.IntStream;
 
 /**
  * <b>Description : </b>

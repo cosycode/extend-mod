@@ -4,7 +4,8 @@ import lombok.NonNull;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.*;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 
 /**
  * <b>Description : </b>
@@ -12,9 +13,8 @@ import java.util.function.*;
  * <b>created in </b> 2021/4/6
  *
  * @author CPF
- * @since 1.0
  **/
-public class OnceExecClosureProxy<T, P, R> extends AbstractClosureProxy<T, P, R>{
+public class OnceExecClosureProxy<T, P, R> extends AbstractClosureProxy<T, P, R> {
 
     private final Lock lock = new ReentrantLock();
 
@@ -30,6 +30,10 @@ public class OnceExecClosureProxy<T, P, R> extends AbstractClosureProxy<T, P, R>
 
     public OnceExecClosureProxy(@NonNull T then, @NonNull BiConsumer<T, P> biConsumer) {
         super(then, biConsumer);
+    }
+
+    public static <T> T of(T then) {
+        return new OnceExecClosureProxy<>(then).proxy();
     }
 
     public OnceExecClosureProxy<T, P, R> skip(T skip) {
@@ -53,10 +57,6 @@ public class OnceExecClosureProxy<T, P, R> extends AbstractClosureProxy<T, P, R>
             }
         }
         return null;
-    }
-
-    public static <T> T of(T then) {
-        return new OnceExecClosureProxy<>(then).proxy();
     }
 
 }

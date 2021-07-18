@@ -8,11 +8,12 @@ import java.util.function.Supplier;
 
 /**
  * <b>Description : </b> 闭包代理单例模式:
- * <p> 作用是 将一个原本不是单例的方法 在经过代理后变成单例方法.
+ * <p>
+ * 作用是 将一个原本不是单例的方法 在经过代理后变成单例方法.
+ * </p>
  * <b>created in </b> 2021/4/6
  *
  * @author CPF
- * @since 1.0
  **/
 public class SingletonClosureProxy<T, P, R> extends AbstractClosureProxy<T, P, R> {
 
@@ -34,6 +35,10 @@ public class SingletonClosureProxy<T, P, R> extends AbstractClosureProxy<T, P, R
         super(then, biConsumer);
     }
 
+    public static <R> Supplier<R> of(Supplier<R> supplier) {
+        return new SingletonClosureProxy<>(supplier).proxy();
+    }
+
     @Override
     public R closureFunction(P params) {
         if (obj == null) {
@@ -46,10 +51,6 @@ public class SingletonClosureProxy<T, P, R> extends AbstractClosureProxy<T, P, R
             }
         }
         return obj;
-    }
-
-    public static <R> Supplier<R> of(Supplier<R> supplier) {
-        return new SingletonClosureProxy<>(supplier).proxy();
     }
 
 }

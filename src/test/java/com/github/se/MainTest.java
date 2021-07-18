@@ -10,24 +10,6 @@ import java.nio.charset.StandardCharsets;
 
 public class MainTest {
 
-    @Test
-    public void main() throws FileNotFoundException {
-        FileSystemUtils.fileDisposeFromDir(new File("C:\\Users\\Private\\read\\red"), file -> {
-            try {
-                final String encoding = codeString(file);
-                System.out.println(encoding + " ==> " + new FileReader(file).getEncoding() + " -- " + file.getName());
-                if (encoding.equals("UTF-8")) {
-                    final String s1 = IoUtils.readStringFromInputStream(new FileInputStream(file), StandardCharsets.UTF_8);
-                    IoUtils.writeStringToOutputStream(new FileOutputStream(file), s1, Charset.forName("GBK"));
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }, null);
-    }
-
     /**
      * 判断文件的编码格式
      *
@@ -92,6 +74,24 @@ public class MainTest {
             e.printStackTrace();
         }
         return "null";
+    }
+
+    @Test
+    public void main() throws FileNotFoundException {
+        FileSystemUtils.fileDisposeFromDir(new File("C:\\Users\\Private\\read\\red"), file -> {
+            try {
+                final String encoding = codeString(file);
+                System.out.println(encoding + " ==> " + new FileReader(file).getEncoding() + " -- " + file.getName());
+                if (encoding.equals("UTF-8")) {
+                    final String s1 = IoUtils.readStringFromInputStream(new FileInputStream(file), StandardCharsets.UTF_8);
+                    IoUtils.writeStringToOutputStream(new FileOutputStream(file), s1, Charset.forName("GBK"));
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }, null);
     }
 
 }

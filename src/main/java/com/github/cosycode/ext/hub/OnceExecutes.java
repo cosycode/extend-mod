@@ -14,23 +14,77 @@ import java.util.function.Supplier;
 
 /**
  * <b>Description : </b>
+ * <p>
+ * <b>created in </b> 2020/12/10
+ * </p>
  *
  * @author CPF
- * @date 2020/12/10 15:11
  **/
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OnceExecutes {
+
+    public static <T> Consumer<T> consumer(@NonNull Consumer<T> then) {
+        OnceExecutorForConsumer<T> onceExecutor = new OnceExecutorForConsumer<>(then);
+        return onceExecutor::onceExe;
+    }
+
+    public static <T> Consumer<T> consumer(@NonNull Consumer<T> then, Consumer<T> skip) {
+        OnceExecutorForConsumer<T> onceExecutor = new OnceExecutorForConsumer<>(then);
+        onceExecutor.setSkip(skip);
+        return onceExecutor::onceExe;
+    }
+
+    public static Runnable runnable(@NonNull Runnable then) {
+        OnceExecutorForRunnable onceExecutor = new OnceExecutorForRunnable(then);
+        return onceExecutor::onceExe;
+    }
+
+    public static Runnable runnable(@NonNull Runnable then, Runnable skip) {
+        OnceExecutorForRunnable onceExecutor = new OnceExecutorForRunnable(then);
+        onceExecutor.setSkip(skip);
+        return onceExecutor::onceExe;
+    }
+
+    public static <T, R> Function<T, R> function(@NonNull Function<T, R> then) {
+        OnceExecutorForFunction<T, R> onceExecutor = new OnceExecutorForFunction<>(then);
+        return onceExecutor::onceExe;
+    }
+
+    public static <T, R> Function<T, R> function(@NonNull Function<T, R> then, Function<T, R> skip) {
+        OnceExecutorForFunction<T, R> onceExecutor = new OnceExecutorForFunction<>(then);
+        onceExecutor.setSkip(skip);
+        return onceExecutor::onceExe;
+    }
+
+    public static <R> Supplier<R> supplier(@NonNull Supplier<R> then) {
+        OnceExecutorForSupplier<R> onceExecutor = new OnceExecutorForSupplier<>(then);
+        return onceExecutor::onceExe;
+    }
+
+    public static <R> Supplier<R> supplier(@NonNull Supplier<R> then, Supplier<R> skip) {
+        OnceExecutorForSupplier<R> onceExecutor = new OnceExecutorForSupplier<>(then);
+        onceExecutor.setSkip(skip);
+        return onceExecutor::onceExe;
+    }
+
+    public static <T, P, R> Function<P, R> exec(@NonNull T then, @NonNull BiFunction<T, P, R> function) {
+        OnceExecutorForCommon<T, P, R> onceExecutor = new OnceExecutorForCommon<>(then, null, function);
+        return onceExecutor::onceExe;
+    }
+
+    public static <T, P, R> Function<P, R> exec(@NonNull T then, T skip, @NonNull BiFunction<T, P, R> function) {
+        OnceExecutorForCommon<T, P, R> onceExecutor = new OnceExecutorForCommon<>(then, skip, function);
+        return onceExecutor::onceExe;
+    }
 
     public static class OnceExecutorForCommon<T, P, R> {
 
         private final Lock lock = new ReentrantLock();
 
         private final T then;
-
+        private final BiFunction<T, P, R> biFunction;
         @Setter
         private T skip;
-
-        private final BiFunction<T, P, R> biFunction;
 
         public OnceExecutorForCommon(T then, BiFunction<T, P, R> function) {
             this.then = then;
@@ -178,60 +232,6 @@ public class OnceExecutes {
             }
             return null;
         }
-    }
-
-    public static <T> Consumer<T>  consumer(@NonNull Consumer<T> then) {
-        OnceExecutorForConsumer<T> onceExecutor = new OnceExecutorForConsumer<>(then);
-        return onceExecutor::onceExe;
-    }
-
-    public static <T> Consumer<T> consumer(@NonNull Consumer<T> then, Consumer<T> skip) {
-        OnceExecutorForConsumer<T> onceExecutor = new OnceExecutorForConsumer<>(then);
-        onceExecutor.setSkip(skip);
-        return onceExecutor::onceExe;
-    }
-
-    public static Runnable runnable(@NonNull Runnable then) {
-        OnceExecutorForRunnable onceExecutor = new OnceExecutorForRunnable(then);
-        return onceExecutor::onceExe;
-    }
-
-    public static Runnable runnable(@NonNull Runnable then, Runnable skip) {
-        OnceExecutorForRunnable onceExecutor = new OnceExecutorForRunnable(then);
-        onceExecutor.setSkip(skip);
-        return onceExecutor::onceExe;
-    }
-
-    public static <T, R> Function<T, R> function(@NonNull Function<T, R> then) {
-        OnceExecutorForFunction<T, R> onceExecutor = new OnceExecutorForFunction<>(then);
-        return onceExecutor::onceExe;
-    }
-
-    public static <T, R> Function<T, R> function(@NonNull Function<T, R> then, Function<T, R> skip) {
-        OnceExecutorForFunction<T, R> onceExecutor = new OnceExecutorForFunction<>(then);
-        onceExecutor.setSkip(skip);
-        return onceExecutor::onceExe;
-    }
-
-    public static <R> Supplier<R> supplier(@NonNull Supplier<R> then) {
-        OnceExecutorForSupplier<R> onceExecutor = new OnceExecutorForSupplier<>(then);
-        return onceExecutor::onceExe;
-    }
-
-    public static <R> Supplier<R> supplier(@NonNull Supplier<R> then, Supplier<R> skip) {
-        OnceExecutorForSupplier<R> onceExecutor = new OnceExecutorForSupplier<>(then);
-        onceExecutor.setSkip(skip);
-        return onceExecutor::onceExe;
-    }
-
-    public static <T, P, R> Function<P, R> exec(@NonNull T then, @NonNull BiFunction<T, P, R> function) {
-        OnceExecutorForCommon<T, P, R> onceExecutor = new OnceExecutorForCommon<>(then, null, function);
-        return onceExecutor::onceExe;
-    }
-
-    public static <T, P, R> Function<P, R> exec(@NonNull T then, T skip, @NonNull BiFunction<T, P, R> function) {
-        OnceExecutorForCommon<T, P, R> onceExecutor = new OnceExecutorForCommon<>(then, skip, function);
-        return onceExecutor::onceExe;
     }
 
 }

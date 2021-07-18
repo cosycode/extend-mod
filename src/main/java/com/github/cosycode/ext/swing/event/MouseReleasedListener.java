@@ -5,9 +5,11 @@ import java.awt.event.MouseListener;
 
 /**
  * <b>Description : </b>
+ * <p>
+ * <b>created in </b> 2020/12/10
+ * </p>
  *
  * @author CPF
- * @date 2020/12/10 15:11
  **/
 @FunctionalInterface
 public interface MouseReleasedListener extends MouseListener {

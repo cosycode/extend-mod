@@ -12,7 +12,6 @@ import java.awt.*;
  * <b>created in </b> 2020/5/12
  *
  * @author CPF
- * @since 1.0
  */
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

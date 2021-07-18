@@ -1,14 +1,6 @@
 package com.github.cosycode.ext.fileinport;
 
-import lombok.NonNull;
-
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * <b>Description : </b>
@@ -18,12 +10,17 @@ import java.util.stream.Collectors;
  */
 public class ExcelImportDemo {
 
+    public static void main(String[] args) {
+        final Method[] declaredMethods = Cindf.class.getDeclaredMethods();
+        System.out.println(declaredMethods);
+    }
+
     public static class Cindf {
-        public void testCommon() {
+        public static void testStatic() {
 
         }
 
-        public static void testStatic() {
+        public void testCommon() {
 
         }
     }
@@ -32,12 +29,6 @@ public class ExcelImportDemo {
         public void testCommon() {
 
         }
-    }
-
-
-    public static void main(String[] args) {
-        final Method[] declaredMethods = Cindf.class.getDeclaredMethods();
-        System.out.println(declaredMethods);
     }
 
 

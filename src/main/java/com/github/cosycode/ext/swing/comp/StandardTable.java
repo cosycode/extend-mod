@@ -11,6 +11,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * <b>Description : </b> swing 标准表格类
+ * <p>
+ * <b>created in </b> 2020/11/18
+ * </p>
+ *
+ * @author CPF
+ **/
 public class StandardTable<T extends IMapGetter<String, Object>> extends JPanel {
 
     @Getter
@@ -94,7 +102,7 @@ public class StandardTable<T extends IMapGetter<String, Object>> extends JPanel 
     /**
      * 标准 Table 模板
      */
-    private class StandardTableModel extends AbstractTableModel{
+    private class StandardTableModel extends AbstractTableModel {
 
         /**
          * 是否有序号列
@@ -117,7 +125,9 @@ public class StandardTable<T extends IMapGetter<String, Object>> extends JPanel 
             return columnConfigList.get(column).getText();
         }
 
-        public int getRowCount() { return data.size(); }
+        public int getRowCount() {
+            return data.size();
+        }
 
         public int getColumnCount() {
             if (serialNumberAble) {

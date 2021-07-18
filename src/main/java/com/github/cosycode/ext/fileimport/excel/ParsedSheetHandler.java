@@ -7,9 +7,11 @@ import java.util.List;
 
 /**
  * <b>Description : </b> 解析后的Excel句柄
+ * <p>
+ * <b>created in </b> 2019/8/27
+ * </p>
  *
  * @author CPF
- * @date 2019/8/27 10:43
  **/
 @Slf4j
 public class ParsedSheetHandler<T> {
@@ -29,11 +31,6 @@ public class ParsedSheetHandler<T> {
     @Getter
     private DbOperateHandle<T> dbOperateHandle;
 
-    @FunctionalInterface
-    public interface DbOperateHandle<T> {
-        int operateDb(List<T> dataList);
-    }
-
     public ParsedSheetHandler(SheetInfo sheetInfo, List<T> dataList, DbOperateHandle<T> dbOperateHandle) {
         this.sheetInfo = sheetInfo;
         this.dataList = dataList;
@@ -45,6 +42,11 @@ public class ParsedSheetHandler<T> {
      */
     public final int operateDb() {
         return dbOperateHandle.operateDb(dataList);
+    }
+
+    @FunctionalInterface
+    public interface DbOperateHandle<T> {
+        int operateDb(List<T> dataList);
     }
 
 //    private DbOperateHandle<T> dbOperateHandle;

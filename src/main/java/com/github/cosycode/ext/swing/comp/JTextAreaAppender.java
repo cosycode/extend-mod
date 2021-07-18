@@ -23,18 +23,28 @@ import java.awt.*;
 import java.io.Serializable;
 
 /**
+ * <b>Description : </b>
+ * <p>
  * 自定义实现log4j2的输出源
  *
- * @Plugin..注解：这个注解，是为了在之后配置log4j2.xml时，指定的Appender Tag。
+ * <b>@Plugin</b>..注解：这个注解，是为了在之后配置log4j2.xml时，指定的Appender Tag。
  * 构造函数：除了使用父类的以外，也可以增加一些自己的配置。
  * 重写append()方法：这里面需要实现具体的逻辑，日志的去向。
  * createAppender()方法：主要是接收log4j2.xml中的配置项。
- *
  * 若此类失效, 则看下配置文件是否被正确读入, 编译classpath路径下是否有log4j文件
- */
+ * </p>
+ *
+ * <p>
+ * <b>created in </b> 2020/11/18
+ * </p>
+ *
+ * @author CPF
+ **/
 @Plugin(name = "JTextAreaAppender", category = "Core", elementType = "appender", printObject = true)
 public class JTextAreaAppender extends AbstractAppender {
 
+    @Setter
+    protected static JTextPane defaultJTextPane;
     @Getter
     protected final JTextPane jTextPane;
 
@@ -64,26 +74,6 @@ public class JTextAreaAppender extends AbstractAppender {
         jTextPane.setParagraphAttributes(warn, true);
     }
 
-    @Override
-    public void append(LogEvent event) {
-        //日志二进制文件，输出到指定位置就行
-        try {
-            final byte[] bytes = getLayout().toByteArray(event);
-            Level level = event.getLevel();
-            Style style = jTextPane.getStyle(level.name());
-            Document document = jTextPane.getDocument();
-            document.insertString(document.getLength(), new String(bytes), style);
-            //下面这个是要实现的自定义逻辑
-        } catch (Exception ex) {
-            if (!ignoreExceptions()) {
-                throw new AppenderLoggingException(ex);
-            }
-        }
-    }
-
-    @Setter
-    protected static JTextPane defaultJTextPane;
-
     /**
      * log4j2 使用 appender 插件工厂，因此传参可以直接通过 PluginAttribute 注解注入
      */
@@ -103,6 +93,23 @@ public class JTextAreaAppender extends AbstractAppender {
             throw new RuntimeException("事先请配置好 defaultJTextPane");
         } else {
             return new JTextAreaAppender(name, filter, layout, ignoreExceptions, defaultJTextPane);
+        }
+    }
+
+    @Override
+    public void append(LogEvent event) {
+        //日志二进制文件，输出到指定位置就行
+        try {
+            final byte[] bytes = getLayout().toByteArray(event);
+            Level level = event.getLevel();
+            Style style = jTextPane.getStyle(level.name());
+            Document document = jTextPane.getDocument();
+            document.insertString(document.getLength(), new String(bytes), style);
+            //下面这个是要实现的自定义逻辑
+        } catch (Exception ex) {
+            if (!ignoreExceptions()) {
+                throw new AppenderLoggingException(ex);
+            }
         }
     }
 }

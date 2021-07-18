@@ -5,9 +5,11 @@ import java.awt.event.KeyListener;
 
 /**
  * <b>Description : </b>
+ * <p>
+ * <b>created in </b> 2020/11/10
+ * </p>
  *
  * @author CPF
- * @date 2020/11/10 10:41
  **/
 @FunctionalInterface
 public interface KeyReleasedListener extends KeyListener {
@@ -17,14 +19,16 @@ public interface KeyReleasedListener extends KeyListener {
      * See the class description for {@link KeyEvent} for a definition of
      * a key typed event.
      */
-    default void keyTyped(KeyEvent e){}
+    default void keyTyped(KeyEvent e) {
+    }
 
     /**
      * Invoked when a key has been pressed.
      * See the class description for {@link KeyEvent} for a definition of
      * a key pressed event.
      */
-    default void keyPressed(KeyEvent e){}
+    default void keyPressed(KeyEvent e) {
+    }
 
     /**
      * Invoked when a key has been released.

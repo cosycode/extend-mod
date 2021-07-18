@@ -7,13 +7,12 @@ import java.util.function.*;
  * <b>Description : </b> 抽象闭包代理类
  * <p>
  * <b>created in </b> 2021/4/5
- *
- * @author CPF
- * @since 1.0
+ * </p>
  *
  * @param <T> 代理方法的函数式接口实例
  * @param <P> 代理方法可能传入的参数类型
  * @param <R> 代理方法可能的返回值类型
+ * @author CPF
  */
 public abstract class AbstractClosureProxy<T, P, R> {
 
@@ -110,8 +109,8 @@ public abstract class AbstractClosureProxy<T, P, R> {
      * 返回自定义的闭包代理函数式接口实例
      *
      * @param function 自定义闭包代理函数式接口实例返回函数
+     * @param <V>      自定义的返回函数式接口类型
      * @return 自定义的闭包代理函数式接口实例
-     * @param <V> 自定义的返回函数式接口类型
      */
     public <V> V proxy(Function<Function<P, R>, V> function) {
         return function.apply(this::closureFunction);

@@ -1,11 +1,6 @@
 package com.github.se;
 
 import lombok.Getter;
-import lombok.Setter;
-
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.BiFunction;
 
 /**
  * <b>Description : </b>

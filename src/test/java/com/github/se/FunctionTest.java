@@ -15,7 +15,7 @@ import java.util.function.UnaryOperator;
  * <b>created in </b> 2021/4/7
  *
  * @author CPF
- * @since 1.0
+ * @since 0.1.0
  **/
 @Slf4j
 public class FunctionTest {
@@ -78,12 +78,6 @@ public class FunctionTest {
         return map;
     }
 
-    @FunctionalInterface
-    interface Function26{
-        Map<Integer, String> fun26(String str, Integer... integers);
-    }
-
-
     @Test
     public void test() {
         FunctionTest functionTest = new FunctionTest();
@@ -112,6 +106,12 @@ public class FunctionTest {
         proxy.fun26("haha", 9);
 
 
+    }
+
+
+    @FunctionalInterface
+    interface Function26 {
+        Map<Integer, String> fun26(String str, Integer... integers);
     }
 
 }

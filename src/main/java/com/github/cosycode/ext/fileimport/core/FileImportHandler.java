@@ -6,17 +6,20 @@ import java.io.InputStream;
 
 /**
  * <b>Description : </b> 读取并解压分发文件
+ * <p>
+ * <b>created in </b> 2020/7/22
+ * </p>
+ * <p>
  * 1. 设置配置
  * 2. 读取文件
  * 3. 将数据解析为记录
  * 4. 验证
  * 5. 后处理
  * 6. 导入数据库或更新数据库
- *
+ * </p>
  *
  * @author CPF
- * Date: 2020/7/22 16:15
- */
+ **/
 public class FileImportHandler {
 
     /**
