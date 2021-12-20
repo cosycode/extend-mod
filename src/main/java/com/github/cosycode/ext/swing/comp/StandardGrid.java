@@ -3,6 +3,7 @@ package com.github.cosycode.ext.swing.comp;
 import com.github.cosycode.common.base.IMapGetter;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -19,7 +20,7 @@ import java.util.List;
  *
  * @author CPF
  **/
-public class StandardTable<T extends IMapGetter<String, Object>> extends JPanel {
+public class StandardGrid<T extends IMapGetter<String, Object>> extends JPanel {
 
     @Getter
     private final JTable table;
@@ -33,9 +34,10 @@ public class StandardTable<T extends IMapGetter<String, Object>> extends JPanel 
     @Getter
     private final List<T> data = new ArrayList<>();
 
+    @Getter
     private final AbstractTableModel tableModel = new StandardTableModel();
 
-    public StandardTable() {
+    public StandardGrid() {
         table = new JTable(tableModel);
 
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -55,9 +57,38 @@ public class StandardTable<T extends IMapGetter<String, Object>> extends JPanel 
         tableModel.fireTableDataChanged();
     }
 
+    public void add(int index, T t) {
+        data.add(index, t);
+        tableModel.fireTableDataChanged();
+    }
+
+    public void addBatch(int index, Collection<T> collection) {
+        data.addAll(index, collection);
+        tableModel.fireTableRowsInserted(index, index + collection.size() - 1);
+    }
+
+    public void insert(int index, T t) {
+        data.add(index, t);
+        tableModel.fireTableRowsInserted(index, index);
+    }
+
     public void addAll(Collection<T> c) {
         data.addAll(c);
         tableModel.fireTableDataChanged();
+    }
+
+    public void update(int index, T t) {
+        data.set(index, t);
+        tableModel.fireTableRowsUpdated(index, index);
+    }
+
+    public void delete(int index) {
+        delete(index, index);
+    }
+
+    public void delete(int firstRow, int lastRow) {
+        data.removeAll(data.subList(firstRow, lastRow));
+        tableModel.fireTableRowsDeleted(firstRow, lastRow);
     }
 
     public void setData(Collection<T> c) {
@@ -70,6 +101,18 @@ public class StandardTable<T extends IMapGetter<String, Object>> extends JPanel 
         columnConfigList.clear();
         columnConfigList.addAll(list);
         tableModel.fireTableStructureChanged();
+    }
+
+    /**
+     * 设置标准table显示的行的数量, 根据行的数量设置滚动面板的高度
+     *
+     * @param rowSizeVisible 滚动面板设置显示行的数量
+     */
+    public void setPreferredScrollableViewportRowSize(int rowSizeVisible) {
+        int cols = table.getColumnModel().getTotalColumnWidth();
+        int rows = table.getRowHeight() * rowSizeVisible;
+        Dimension d = new Dimension(cols,rows);
+        table.setPreferredScrollableViewportSize(d);
     }
 
     public void fireTableDataChanged() {
@@ -102,7 +145,7 @@ public class StandardTable<T extends IMapGetter<String, Object>> extends JPanel 
     /**
      * 标准 Table 模板
      */
-    private class StandardTableModel extends AbstractTableModel {
+    public class StandardTableModel extends AbstractTableModel {
 
         /**
          * 是否有序号列
@@ -114,10 +157,14 @@ public class StandardTable<T extends IMapGetter<String, Object>> extends JPanel 
          */
         private boolean cellEditable = true;
 
+        @Getter
+        @Setter
+        private String orderHeaderName = "";
+
         public String getColumnName(int column) {
             if (serialNumberAble) {
                 if (column == 0) {
-                    return "序号";
+                    return orderHeaderName;
                 } else {
                     column -= 1;
                 }
@@ -139,7 +186,7 @@ public class StandardTable<T extends IMapGetter<String, Object>> extends JPanel 
         public Object getValueAt(int row, int col) {
             if (serialNumberAble) {
                 if (col == 0) {
-                    return row;
+                    return row + 1;
                 } else {
                     col -= 1;
                 }

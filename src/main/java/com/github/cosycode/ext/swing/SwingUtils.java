@@ -37,7 +37,7 @@ public class SwingUtils {
      * @param component 组件
      * @param toPoint   最终位置
      */
-    public static void moveComp(Component component, Point toPoint) {
+    public static void moveComp(Component component, Point toPoint) throws InterruptedException {
         moveComp(component, toPoint, BASE_TIME, INTERVAL, PX_ONE_TIME);
     }
 
@@ -51,7 +51,7 @@ public class SwingUtils {
      * @param interval  多久移动一次
      * @param pxOneTime 一次移动多少距离
      */
-    public static void moveComp(Component component, Point toPoint, int baseTime, int interval, int pxOneTime) {
+    public static void moveComp(Component component, Point toPoint, int baseTime, int interval, int pxOneTime) throws InterruptedException {
         Point fromPoint = component.getLocation();
         int xSub = toPoint.x - fromPoint.x;
         int ySub = toPoint.y - fromPoint.y;
@@ -68,20 +68,16 @@ public class SwingUtils {
      * @param times     需要移动多少次
      * @param interval  每帧时间间隔
      */
-    public static void moveComp(Component component, Point toPoint, int times, int interval) {
+    public static void moveComp(Component component, Point toPoint, int times, int interval) throws InterruptedException {
         Point fromPoint = component.getLocation();
         int xSub = toPoint.x - fromPoint.x;
         int ySub = toPoint.y - fromPoint.y;
         for (int i = 0; i < times; i++) {
             double p = (double) i / times;
             component.setLocation((int) (fromPoint.x + xSub * p), (int) (fromPoint.y + ySub * p));
-            try {
-                Thread.sleep(interval);
-            } catch (InterruptedException e) {
-                log.error("组件平滑移动sleep过程中, 线程中断", e);
-                Thread.currentThread().interrupt();
-            }
+            Thread.sleep(interval);
         }
+        component.setLocation(toPoint.x, toPoint.y);
     }
 
 }

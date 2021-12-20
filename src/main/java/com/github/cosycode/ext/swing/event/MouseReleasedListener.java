@@ -19,7 +19,7 @@ public interface MouseReleasedListener extends MouseListener {
     }
 
     @Override
-    default void mouseReleased(MouseEvent e) {
+    default void mousePressed(MouseEvent e) {
     }
 
     @Override

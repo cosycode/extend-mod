@@ -1,15 +1,16 @@
-package com.github.se;
-
-import com.github.cosycode.common.util.io.FileSystemUtils;
-import com.github.cosycode.common.util.io.IoUtils;
-import com.github.cosycode.ext.se.util.FileUtils;
-import org.junit.Test;
+package com.github.cosycode.ext.se.util;
 
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
-public class MainTest {
+/**
+ * <b>Description : </b>
+ * <p>
+ * <b>created in </b> 2021/4/30
+ *
+ * @author CPF
+ * @since
+ **/
+public class FileUtils {
 
     /**
      * 判断文件的编码格式
@@ -18,7 +19,7 @@ public class MainTest {
      * @return 文件编码格式
      * @throws Exception
      */
-    public static String codeString(File fileName) {
+    public static String analysisTextFileEncode(File fileName) {
         try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fileName))) {
             String charset = "GBK";
             byte[] first3Bytes = new byte[3];
@@ -75,26 +76,6 @@ public class MainTest {
             e.printStackTrace();
         }
         return "null";
-    }
-
-    @Test
-    public void main() throws FileNotFoundException {
-        FileSystemUtils.fileDisposeFromDir(new File("C:\\Users\\Private\\read\\red"), file -> {
-            try {
-                final String encoding = FileUtils.analysisTextFileEncode(file);
-                System.out.println(encoding + " ==> " + new FileReader(file).getEncoding() + " -- " + file.getName());
-                if (encoding.equals("UTF-8")) {
-                    try (final FileInputStream inputStream = new FileInputStream(file);final FileOutputStream outputStream = new FileOutputStream(file)) {
-                        final String s1 = IoUtils.readStringFromInputStream(inputStream, StandardCharsets.UTF_8);
-                        IoUtils.writeStringToOutputStream(outputStream, s1, Charset.forName("GBK"));
-                    }
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }, null);
     }
 
 }
