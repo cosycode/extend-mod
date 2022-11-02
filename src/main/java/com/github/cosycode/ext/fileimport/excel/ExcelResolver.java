@@ -237,7 +237,7 @@ public class ExcelResolver {
         if (cell == null) {
             return null;
         }
-        CellType cellTypeEnum = cell.getCellTypeEnum();
+        CellType cellTypeEnum = cell.getCellType();
         switch (cellTypeEnum) {
             case NUMERIC:
                 double numericCellValue = cell.getNumericCellValue();

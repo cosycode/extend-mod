@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Base64;
 
 /**
@@ -31,9 +32,8 @@ public class DataConvertUtils {
      * @return String base64编码
      * @throws IOException 文件读取异常 & 文件未发现异常
      */
-
     public static String fileToBase64(File file) throws IOException {
-        try (InputStream in = new FileInputStream(file)) {
+        try (InputStream in = Files.newInputStream(file.toPath())) {
             final long length = file.length();
             if (length > Integer.MAX_VALUE) {
                 throw new RuntimeException("the file is too large");
