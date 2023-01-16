@@ -1,125 +1,104 @@
 package com.github.cosycode.ext.web.http;
 
-
-import com.github.cosycode.common.ext.hub.Throws;
-import com.github.cosycode.common.util.otr.PrintTool;
-import com.github.cosycode.common.validate.RequireUtil;
-import lombok.NonNull;
+import com.github.cosycode.ext.se.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.hc.client5.http.classic.methods.HttpGet;
-import org.apache.hc.client5.http.classic.methods.HttpPost;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.ClientProtocolException;
+import org.apache.hc.client5.http.HttpResponseException;
+import org.apache.hc.client5.http.classic.methods.*;
+import org.apache.hc.core5.annotation.Contract;
+import org.apache.hc.core5.annotation.ThreadingBehavior;
 import org.apache.hc.core5.http.*;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicHeader;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
-import org.apache.hc.core5.net.URIBuilder;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class HttpUtils {
 
-    public static void jsonHeader(@NonNull Map<String, Object> header) {
-        header.computeIfAbsent(HttpHeaders.CONTENT_TYPE, k -> ContentType.APPLICATION_JSON);
-        header.computeIfAbsent(HttpHeaders.ACCEPT_ENCODING, k -> "gzip, x-gzip, deflate");
-        header.computeIfAbsent(HttpHeaders.CONNECTION, k -> "keep-alive");
-    }
-
-    public static Map<String, Object> jsonHeader() {
-        Map<String, Object> header = new HashMap<>();
-        jsonHeader(header);
-        return header;
-    }
-
-    public static String get(String urlString, Map<String, Object> headers, Map<String, String> params) throws IOException {
-        List<Header> headerList = new ArrayList<>();
-        if (headers != null) {
-            // Map<String, Object> headers 转换为 List<Header>
-            for (Map.Entry<String, Object> objectEntry : headers.entrySet()) {
-                headerList.add(new BasicHeader(objectEntry.getKey(), objectEntry.getValue()));
-            }
-        }
+    private static String createRequestUrl(String url, Map<String, String> paramMap) {
         // Map<String, String> params 转换为 List<BasicNameValuePair> param
-        List<NameValuePair> list = new ArrayList<>();
-        if (params != null) {
-            for (Map.Entry<String, String> stringEntry : params.entrySet()) {
-                list.add(new BasicNameValuePair(stringEntry.getKey(), stringEntry.getValue()));
+        if (paramMap != null && ! paramMap.isEmpty()) {
+            List<NameValuePair> paramList = new ArrayList<>();
+            for (Map.Entry<String, String> stringEntry : paramMap.entrySet()) {
+                paramList.add(new BasicNameValuePair(stringEntry.getKey(), stringEntry.getValue()));
             }
+            String paramString = paramList.stream().map(it -> it.getName() + "=" + it.getValue()).collect(Collectors.joining("&"));
+            if (url.contains("?")) {
+                return url + "&" + paramString;
+            } else {
+                return url + "?" + paramString;
+            }
+        } else {
+            return url;
         }
-        // 拼接 Uri
-        URL url = new URL(urlString);
-        URIBuilder uriBuilder = new URIBuilder().setScheme(url.getProtocol()).setHost(url.getHost()).setPort(url.getPort()).setPath(url.getPath()).setParameters(list);
-        URI uri;
-        try {
-            uri = uriBuilder.build();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-        // 创建 GET 请求对象
-        HttpGet httpGet = new HttpGet(uri);
-        // 设置 header
+    }
+
+    public static <T> T http(String method, String requestUrl, Map<String, Object> headers, Map<String, String> params,
+                             Object jsonBody, HttpClientResponseHandler<? extends T> responseHandler) throws IOException {
+        // 拼接 url
+        String url = createRequestUrl(requestUrl, params);
+        // 创建 HttpUriRequestBase 对象
+        HttpUriRequestBase httpUriRequestBase = new HttpUriRequestBase(method, URI.create(url));
+        // Map<String, Object> headers 转换为 List<Header>
         if (headers != null && ! headers.isEmpty()) {
             for (Map.Entry<String, Object> objectEntry : headers.entrySet()) {
-                httpGet.addHeader(new BasicHeader(objectEntry.getKey(), objectEntry.getValue()));
-            }
-        }
-        // 调用 HttpClient 的 execute 方法执行请求
-        CloseableHttpResponse response = Http5Client.getCloseableHttpClient().execute(httpGet);
-        // 验证请求状态
-        int code = response.getCode();
-        RequireUtil.requireBooleanTrue(HttpStatus.SC_OK == code, PrintTool.format("请求失败, 状态是{}, query: ", code, uri.getQuery()));
-        // 转换结果
-        HttpEntity entity = response.getEntity();
-        return Throws.fun(entity, EntityUtils::toString).logThrowable("请求转换失败" + uri.getQuery()).value();
-    }
-
-    public static String post(String urlString, Map<String, Object> headers, Map<String, String> params, String jsonBody) throws IOException {
-        // Map<String, String> params 转换为 List<BasicNameValuePair> param
-        List<NameValuePair> list = new ArrayList<>();
-        if (params != null) {
-            for (Map.Entry<String, String> stringEntry : params.entrySet()) {
-                list.add(new BasicNameValuePair(stringEntry.getKey(), stringEntry.getValue()));
-            }
-        }
-        // 拼接 Uri
-        URL url = new URL(urlString);
-        URIBuilder uriBuilder = new URIBuilder().setScheme(url.getProtocol()).setHost(url.getHost()).setPort(url.getPort()).setPath(url.getPath()).setParameters(list);
-        URI uri;
-        try {
-            uri = uriBuilder.build();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-        // 创建 POST 请求对象
-        HttpPost httpPost = new HttpPost(uri);
-        // 设置 header
-        if (headers != null && ! headers.isEmpty()) {
-            for (Map.Entry<String, Object> objectEntry : headers.entrySet()) {
-                httpPost.addHeader(new BasicHeader(objectEntry.getKey(), objectEntry.getValue()));
+                httpUriRequestBase.addHeader(new BasicHeader(objectEntry.getKey(), objectEntry.getValue()));
             }
         }
         // 设置 body
         if (jsonBody != null) {
-            httpPost.setEntity(new StringEntity(jsonBody, StandardCharsets.UTF_8));
+            String string = jsonBody instanceof String ? (String) jsonBody : JsonUtils.toJson(jsonBody);
+            httpUriRequestBase.setEntity(new StringEntity(string, StandardCharsets.UTF_8));
         }
         // 调用 HttpClient 的 execute 方法执行请求
-        CloseableHttpResponse response = Http5Client.getCloseableHttpClient().execute(httpPost);
-        // 验证请求状态
-        int code = response.getCode();
-        RequireUtil.requireBooleanTrue(HttpStatus.SC_OK == code, PrintTool.format("请求失败, 状态是{}, query: ", code, uri.getQuery()));
-        // 转换结果
-        HttpEntity entity = response.getEntity();
-        return Throws.fun(entity, EntityUtils::toString).logThrowable("请求转换失败" + uri.getQuery()).value();
+        return Http5Client.getCloseableHttpClient().execute(httpUriRequestBase, responseHandler);
+    }
+
+    public static MyHttpResponse get(String urlString, Map<String, Object> headers, Map<String, String> params) throws IOException {
+        return http(HttpGet.METHOD_NAME, urlString, headers, params, null, MyHttpResponse.DEFAULT_HANDLER);
+    }
+
+    public static MyHttpResponse post(String urlString, Map<String, Object> headers, Map<String, String> params, Object jsonBody) throws IOException {
+        return http(HttpPost.METHOD_NAME, urlString, headers, params, jsonBody, MyHttpResponse.DEFAULT_HANDLER);
+    }
+
+    public static MyHttpResponse put(String urlString, Map<String, Object> headers, Map<String, String> params, Object jsonBody) throws IOException {
+        return http(HttpPut.METHOD_NAME, urlString, headers, params, jsonBody, MyHttpResponse.DEFAULT_HANDLER);
+    }
+
+    public static MyHttpResponse delete(String urlString, Map<String, Object> headers, Map<String, String> params, Object jsonBody) throws IOException {
+        return http(HttpDelete.METHOD_NAME, urlString, headers, params, jsonBody, MyHttpResponse.DEFAULT_HANDLER);
+    }
+
+    @Contract(threading = ThreadingBehavior.STATELESS)
+    public static class MyStringHttpClientResponseHandler implements HttpClientResponseHandler<String> {
+        public String handleResponse(ClassicHttpResponse response) throws IOException {
+            HttpEntity entity = response.getEntity();
+            if (response.getCode() >= 300) {
+                EntityUtils.consume(entity);
+                throw new HttpResponseException(response.getCode(), response.getReasonPhrase());
+            } else {
+                return entity == null ? null : this.handleEntity(entity);
+            }
+        }
+
+        public String handleEntity(HttpEntity entity) throws IOException {
+            try {
+                return EntityUtils.toString(entity);
+            } catch (ParseException var3) {
+                throw new ClientProtocolException(var3);
+            }
+        }
     }
 
 }

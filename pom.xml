@@ -66,24 +66,24 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>2.13.1</version>
+            <version>2.14.0</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.13.1</version>
+            <version>2.14.0</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.13.1</version>
+            <version>2.14.0</version>
         </dependency>
 
         <!-- file-format-->
         <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
-            <version>5.6</version>
+            <version>5.7.1</version>
             <scope>provided</scope>
         </dependency>
         <!-- poi-mod-->
@@ -101,6 +101,12 @@
             <version>5.2.1</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.10.0</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- compile & log & test -->
         <dependency>
@@ -111,7 +117,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
-            <version>3.0.0</version>
+            <version>3.0.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
