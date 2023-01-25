@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -55,13 +56,19 @@ public class HttpUtils {
                 httpUriRequestBase.addHeader(new BasicHeader(objectEntry.getKey(), objectEntry.getValue()));
             }
         }
+        String payload = "";
         // 设置 body
         if (jsonBody != null) {
-            String string = jsonBody instanceof String ? (String) jsonBody : JsonUtils.toJson(jsonBody);
-            httpUriRequestBase.setEntity(new StringEntity(string, StandardCharsets.UTF_8));
+            payload = jsonBody instanceof String ? (String) jsonBody : JsonUtils.toJson(jsonBody);
+            httpUriRequestBase.setEntity(new StringEntity(payload, StandardCharsets.UTF_8));
         }
+
+        String uuid = UUID.randomUUID().toString();
+        log.debug("{} [HTTP request ] [{}] \n {}\n{}", uuid, method, url, payload);
         // 调用 HttpClient 的 execute 方法执行请求
-        return Http5Client.getCloseableHttpClient().execute(httpUriRequestBase, responseHandler);
+        T execute = Http5Client.getCloseableHttpClient().execute(httpUriRequestBase, responseHandler);
+        log.debug("{} [HTTP response] [{}] \n {}", uuid, method, execute);
+        return execute;
     }
 
     public static MyHttpResponse get(String urlString, Map<String, Object> headers, Map<String, String> params) throws IOException {

@@ -39,17 +39,8 @@ import java.util.concurrent.TimeUnit;
 public class Http5Client {
 
     private static final int MAX_CONN_TOTAL = 200;
+    private static final int CONNECT_TIME_OUT = 120;
 
-    /**
-     * 配置
-     */
-    private static final RequestConfig requestConfig = RequestConfig.custom()
-        // 连接超时时间
-        .setConnectTimeout(Timeout.ofSeconds(120)).setResponseTimeout(60, TimeUnit.SECONDS)
-        // 从线程池中获取线程超时时间
-        .setConnectionRequestTimeout(Timeout.ofSeconds(30)).build();
-
-    //全局参数
     private static LazySingleton<CloseableHttpClient> defaultCloseableHttpClient = LazySingleton.of(Http5Client::defaultHttpClientBuilder);
 
     /**
@@ -62,21 +53,38 @@ public class Http5Client {
     }
 
     private static CloseableHttpClient defaultHttpClientBuilder() {
-        return HttpClientBuilder.create().setConnectionManager(defaultHttpClientConnectionManager()).evictIdleConnections(TimeValue.ofMinutes(1)).disableAutomaticRetries()
-            // 管理器是共享的，它的生命周期将由调用者管理，并且不会关闭, 否则可能出现Connection pool shut down异常
+        return HttpClientBuilder.create()
+            .setConnectionManager(defaultHttpClientConnectionManager())
+            .evictIdleConnections(TimeValue.ofMinutes(1))
+            .disableAutomaticRetries()
+            // set ConnectManager to shared, the Connection will not be closed, otherwise the exception may be thrown: `Connection pool shut down`
             .setConnectionManagerShared(true)
-            // 长连接策略
-            .setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy()).setDefaultRequestConfig(requestConfig).build();
+            // Set to persistent connection.
+            .setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy())
+            .setDefaultRequestConfig(
+                RequestConfig.custom()
+                    .setResponseTimeout(180, TimeUnit.SECONDS)
+                    .setConnectionRequestTimeout(30, TimeUnit.SECONDS)
+                    .build()
+            ).build();
     }
 
     private static HttpClientConnectionManager defaultHttpClientConnectionManager() {
-        return PoolingHttpClientConnectionManagerBuilder.create().setSSLSocketFactory(getSSLFactory()).setValidateAfterInactivity(TimeValue.ofSeconds(10))
-            // 连接池最大生成连接数
+        return PoolingHttpClientConnectionManagerBuilder.create()
+            .setSSLSocketFactory(getSSLFactory())
             .setMaxConnPerRoute(MAX_CONN_TOTAL - 1)
-            // 默认设置route最大连接数
             .setMaxConnTotal(MAX_CONN_TOTAL)
-            // 下面为不必要的配置
-            .setDefaultConnectionConfig(ConnectionConfig.custom().build()).setDefaultSocketConfig(SocketConfig.custom().setSoTimeout(5, TimeUnit.SECONDS).build()).build();
+            .setDefaultConnectionConfig(
+                ConnectionConfig.custom()
+                    .setConnectTimeout(Timeout.ofSeconds(CONNECT_TIME_OUT))
+                    .setValidateAfterInactivity(TimeValue.ofSeconds(10))
+                    .build()
+            )
+            .setDefaultSocketConfig(
+                SocketConfig.custom()
+                    .setSoTimeout(5, TimeUnit.SECONDS)
+                    .build()
+            ).build();
     }
 
     /**

@@ -3,6 +3,7 @@ package com.github.cosycode.ext.web.http;
 import com.github.cosycode.ext.se.util.JsonUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.client5.http.HttpResponseException;
@@ -22,6 +23,7 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
+@ToString
 public class MyHttpResponse {
 
     public static final HttpClientResponseHandler<MyHttpResponse> DEFAULT_HANDLER = response -> {
