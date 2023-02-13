@@ -55,4 +55,8 @@ public class MyHttpResponse {
         return JsonUtils.fromJson(data, tClass);
     }
 
+    public boolean isSuccess() {
+        return code == 200;
+    }
+
 }

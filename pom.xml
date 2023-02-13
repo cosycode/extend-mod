@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.cosycode</groupId>
     <artifactId>extend-mod</artifactId>
-    <version>0.2.2-SNAPSHOT</version>
+    <version>0.2.3-SNAPSHOT</version>
 
     <name>extend-mod</name>
     <description>扩展模块, 用于存放一些非常用的工具或模块的扩展类, 例如在poi基础上扩展的excel的导入模块, 模拟按键模块</description>
@@ -50,7 +50,7 @@
         <dependency>
             <groupId>com.github.cosycode</groupId>
             <artifactId>common-lang</artifactId>
-            <version>1.8-SNAPSHOT</version>
+            <version>1.8</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
