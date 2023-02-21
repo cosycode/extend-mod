@@ -19,10 +19,13 @@ import java.util.List;
 @Slf4j
 public class LogRecords {
 
-    @Getter
     private static final LogRecord defaultRecord = new LogRecord();
     @Getter
     private static final List<LogRecord> records = new ArrayList<>();
+
+    public static LogRecord defaultRecord() {
+        return defaultRecord;
+    }
 
     public static void addRecord(LogRecord logRecord) {
         if (logRecord != null) {

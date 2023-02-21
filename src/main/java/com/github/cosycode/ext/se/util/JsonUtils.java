@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.github.cosycode.common.lang.BaseRuntimeException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -12,6 +13,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.TreeMap;
 import java.util.function.UnaryOperator;
 
 /**
@@ -58,6 +61,46 @@ public class JsonUtils {
 
     public static  <T> String processJson(String json, Class<T> tClass, UnaryOperator<T> operator) {
         return getJsonParser().processJson(json, tClass, operator);
+    }
+
+    /**
+     * 确保转换时不丢失信息, 通过多次转换json对比转换的字符串.
+     */
+    public static <T> T fromJsonStrict(String json, Class<T> classOfT) {
+        Objects.requireNonNull(json);
+        Objects.requireNonNull(classOfT);
+        T t = fromJson(json, classOfT);
+        String jsonAfter = toJson(t);
+        if (json.equals(jsonAfter)) {
+            return t;
+        }
+        String sortJson = toJson(fromJson(json, TreeMap.class));
+        String sortJsonAfter = toJson(fromJson(json, TreeMap.class));
+        if (sortJson.equals(sortJsonAfter)) {
+            return t;
+        }
+        throw new BaseRuntimeException("json 转换成 classOf T, 信息丢失, \n原来的 json: {}, 排序后的json: {}, \n转换成 {} 后的json: {}",
+            json, sortJson, classOfT.getName(), sortJsonAfter);
+    }
+
+    /**
+     * 确保转换时不丢失信息, 通过多次转换json对比转换的字符串.
+     */
+    public static <T> List<T> fromJsonArrayStrict(String json, Class<T> classOfT) {
+        Objects.requireNonNull(json);
+        Objects.requireNonNull(classOfT);
+        List<T> tList = fromJsonArray(json, classOfT);
+        String jsonAfter = toJson(tList);
+        if (json.equals(jsonAfter)) {
+            return tList;
+        }
+        String sortJson = toJson(fromJsonArray(json, TreeMap.class));
+        String sortJsonAfter = toJson(fromJsonArray(json, TreeMap.class));
+        if (sortJson.equals(sortJsonAfter)) {
+            return tList;
+        }
+        throw new BaseRuntimeException("json 转换成 classOf T, 信息丢失, \n原来的 json: {}, 排序后的json: {}, \n转换成 List<{}> 后的json: {}",
+            json, sortJson, classOfT.getName(), sortJsonAfter);
     }
 
     interface JsonParser {
