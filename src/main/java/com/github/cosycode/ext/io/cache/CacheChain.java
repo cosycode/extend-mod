@@ -25,15 +25,25 @@ import java.util.Objects;
 @AllArgsConstructor
 public class CacheChain<T extends ICacheStack> {
 
-    List<AbstractCacheHandler<T>> cacheHandlerList;
+    final List<AbstractCacheHandler<T>> cacheHandlerList;
 
     public T getData() {
         Objects.requireNonNull(cacheHandlerList);
         if (cacheHandlerList.isEmpty()) {
             throw new BaseRuntimeException("cacheHandlerList is empty");
         }
-        Iterator<AbstractCacheHandler<T>> iterator = cacheHandlerList.iterator();
-        return getData(iterator);
+        AbstractCacheHandler<T> firstHandler = cacheHandlerList.get(0);
+        T t = firstHandler.get();
+        if (t == null || !firstHandler.validate(t)) {
+            synchronized (cacheHandlerList) {
+                t = firstHandler.get();
+                if (t == null || ! firstHandler.validate(t)) {
+                    Iterator<AbstractCacheHandler<T>> iterator = cacheHandlerList.iterator();
+                    return getData(iterator);
+                }
+            }
+        }
+        return t;
     }
 
     /**

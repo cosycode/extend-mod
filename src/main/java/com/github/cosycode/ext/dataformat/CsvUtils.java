@@ -1,5 +1,6 @@
 package com.github.cosycode.ext.dataformat;
 
+import com.github.cosycode.common.lang.BaseRuntimeException;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvException;
@@ -10,10 +11,7 @@ import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -40,8 +38,9 @@ public class CsvUtils {
      */
     public static List<String[]> readCSV(File csvFile) throws IOException, CsvException {
         DataInputStream dataInputStream = new DataInputStream(Files.newInputStream(csvFile.toPath()));
-        CSVReader csvReader = new CSVReader(new InputStreamReader(dataInputStream, StandardCharsets.UTF_8));
-        return csvReader.readAll();
+        try (CSVReader csvReader = new CSVReader(new InputStreamReader(dataInputStream, StandardCharsets.UTF_8))) {
+            return csvReader.readAll();
+        }
     }
 
 
@@ -97,8 +96,14 @@ public class CsvUtils {
                 }
                 String da = data[i] == null ? "" : data[i].trim();
                 Class<?> type = field.getType();
-                Object obj = TypeConverter.convertStringToObj(da, type);
-                field.set(t, obj);
+                try {
+                    if (!da.isEmpty()) {
+                        Object obj = TypeConverter.convertStringToObj(da, type);
+                        field.set(t, obj);
+                    }
+                } catch (IllegalArgumentException e) {
+                    throw new BaseRuntimeException("convertStringToObj error, data is " + Arrays.toString(data), e);
+                }
             }
             result.add(t);
         }

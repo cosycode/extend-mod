@@ -5,11 +5,16 @@ import com.github.cosycode.common.lang.BaseRuntimeException;
 import com.github.cosycode.common.lang.NotSupportException;
 import com.github.cosycode.common.lang.ShouldNotHappenException;
 import com.github.cosycode.common.util.common.CollectUtils;
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -27,6 +32,14 @@ import java.util.stream.Collectors;
 public interface JsonNode {
 
     JsonNode getExpression(String expression);
+
+    default String getString(String expression) {
+        JsonNode jsonNode = getExpression(expression);
+        if (jsonNode == null) {
+            return null;
+        }
+        return jsonNode.getAsString();
+    }
 
     String getAsString();
 
@@ -48,7 +61,7 @@ public interface JsonNode {
 
     default JsonObj getAsJsonObj() {
         if (this.isJsonObj()) {
-            return (JsonObj)this;
+            return (JsonObj) this;
         } else {
             throw new IllegalStateException("Not a JSON Object: " + this);
         }
@@ -64,7 +77,7 @@ public interface JsonNode {
 
     default JsonPrimary getAsJsonPrimary() {
         if (this.isJsonPrimary()) {
-            return (JsonPrimary)this;
+            return (JsonPrimary) this;
         } else {
             throw new IllegalStateException("Not a JSON Primary: " + this);
         }
@@ -72,10 +85,50 @@ public interface JsonNode {
 
     default JsonNul getAsJsonNul() {
         if (this.isJsonNul()) {
-            return (JsonNul)this;
+            return (JsonNul) this;
         } else {
             throw new IllegalStateException("Not a JSON Null: " + this);
         }
+    }
+
+    default boolean getAsBoolean() {
+        throw new IllegalStateException("Not a JSON Boolean: " + this);
+    }
+
+    default Number getAsNumber() {
+        throw new IllegalStateException("Not a JSON Number: " + this);
+    }
+
+    default double getAsDouble() {
+        throw new IllegalStateException("Not a JSON Double: " + this);
+    }
+
+    default float getAsFloat() {
+        throw new IllegalStateException("Not a JSON Float: " + this);
+    }
+
+    default long getAsLong() {
+        throw new IllegalStateException("Not a JSON Long: " + this);
+    }
+
+    default int getAsInt() {
+        throw new IllegalStateException("Not a JSON Integer: " + this);
+    }
+
+    default byte getAsByte() {
+        throw new IllegalStateException("Not a JSON Byte: " + this);
+    }
+
+    default BigDecimal getAsBigDecimal() {
+        throw new IllegalStateException("Not a JSON BigDecimal: " + this);
+    }
+
+    default BigInteger getAsBigInteger() {
+        throw new IllegalStateException("Not a JSON BigInteger: " + this);
+    }
+
+    default short getAsShort() {
+        throw new IllegalStateException("Not a JSON Short: " + this);
     }
 
     default JsonArr getAsJsonArr(String expression) {
@@ -142,102 +195,6 @@ public interface JsonNode {
             return getJsonElement().toString();
         }
 
-        public static List<DoubleBean<String, String>> splitExpression(String expression) {
-            // check trim 后均为非空白字符
-            if (! Pattern.matches("\\S+", expression)) {
-                throw new IllegalArgumentException("the characters in expression can not be space char");
-            }
-            if (!expression.startsWith("[")) {
-                expression = "." + expression.trim();
-            }
-            int len = expression.length();
-            if (len <= 1) {
-                throw new IllegalArgumentException("invalid expression: " + expression);
-            }
-            // 代理转换字符串
-            String tempExpression = expression.replaceAll("\\\\.", "\1\2");
-
-            List<DoubleBean<String, String>> list = new ArrayList<>();
-            int idx = 0;
-            while (idx < len) {
-                char c = tempExpression.charAt(idx);
-                if (c == '[') {
-                    if (tempExpression.charAt(idx + 1) == ']') {
-                        throw new BaseRuntimeException("分段为空 [] " + expression);
-                    }
-                    // array
-                    int leftCnt = 1;
-                    int i = idx + 1;
-                    for (; i < len; i++) {
-                        char ch = tempExpression.charAt(i);
-                        if (ch == ']') {
-                            leftCnt--;
-                            if (leftCnt <= 0) {
-                                list.add(DoubleBean.of(Array.class.getSimpleName(), expression.substring(idx + 1, i)));
-                                idx = i + 1;
-                                break;
-                            }
-                        } else if (ch == '[') {
-                            leftCnt++;
-                        }
-                    }
-                    if (i >= len) {
-                        throw new BaseRuntimeException("解析数组失败: expression: {}, successPart: {}, fail: {}", expression, list, expression.substring(idx));
-                    }
-                    continue;
-                }
-                if (c != '.') {
-                    throw new BaseRuntimeException("分段首位不为 . 也不为 [, 解析复杂key失败: expression: {}, successPart: {}, fail: {}", expression, list, expression.substring(idx));
-                }
-                idx++;
-                if (idx >= len) {
-                    throw new BaseRuntimeException("末尾为点");
-                }
-                c = tempExpression.charAt(idx);
-                if (c == '"') {
-                    if (tempExpression.charAt(idx + 1) == '"') {
-                        throw new BaseRuntimeException("分段为空 \"\" " + expression);
-                    }
-                    // object "p1.p2.p3"
-                    int tmp = tempExpression.indexOf('"', idx + 1);
-                    if (tmp < 0) {
-                        throw new BaseRuntimeException("解析复杂key失败: expression: {}, successPart: {}, fail: {}", expression, list, expression.substring(idx));
-                    }
-                    list.add(DoubleBean.of(Object.class.getSimpleName(), expression.substring(idx + 1, tmp)));
-                    idx = tmp + 1;
-                } else {
-                    // object "p1.p2.p3", 首位不应该为 .
-                    if (c == '.' || c == '[') {
-                        throw new BaseRuntimeException("分段解析失败, 发现两个连续的.. ., expression: {}, successPart: {}, fail: {}", expression, list, expression.substring(idx));
-                    }
-                    int tmpP = tempExpression.indexOf('.', idx);
-                    int tmpL = tempExpression.indexOf("[", idx);
-                    if (tmpP < 0) {
-                        if (tmpL < 0) {
-                            list.add(DoubleBean.of(Object.class.getSimpleName(), expression.substring(idx, expression.length())));
-                            idx = expression.length();
-                        } else {
-                            list.add(DoubleBean.of(Object.class.getSimpleName(), expression.substring(idx, tmpL)));
-                            idx = tmpL;
-                        }
-                    } else {
-                        if (tmpL < 0) {
-                            list.add(DoubleBean.of(Object.class.getSimpleName(), expression.substring(idx, tmpP)));
-                            idx = tmpP;
-                        } else {
-                            int min = Math.min(tmpL, tmpP);
-                            list.add(DoubleBean.of(Object.class.getSimpleName(), expression.substring(idx, min)));
-                            idx = min;
-                        }
-                    }
-                }
-            }
-            if (idx != len) {
-                throw new BaseRuntimeException("解析表达式失败: expression: {}, successPart: {}", expression, list);
-            }
-            return list;
-        }
-
         /**
          * <p>
          * expression: 对象查询, 以 . 作为分隔, 如果 key 值里面有点, 则可以使用 \. 表示.
@@ -300,6 +257,102 @@ public interface JsonNode {
             }
             return jsonElement;
         }
+    }
+
+    static List<DoubleBean<String, String>> splitExpression(String expression) {
+        // check trim 后均为非空白字符
+        if (! Pattern.matches("\\S+", expression)) {
+            throw new IllegalArgumentException("the characters in expression can not be space char");
+        }
+        if (! expression.startsWith("[")) {
+            expression = "." + expression.trim();
+        }
+        int len = expression.length();
+        if (len <= 1) {
+            throw new IllegalArgumentException("invalid expression: " + expression);
+        }
+        // 代理转换字符串
+        String tempExpression = expression.replaceAll("\\\\.", "\1\2");
+
+        List<DoubleBean<String, String>> list = new ArrayList<>();
+        int idx = 0;
+        while (idx < len) {
+            char c = tempExpression.charAt(idx);
+            if (c == '[') {
+                if (tempExpression.charAt(idx + 1) == ']') {
+                    throw new BaseRuntimeException("分段为空 [] " + expression);
+                }
+                // array
+                int leftCnt = 1;
+                int i = idx + 1;
+                for (; i < len; i++) {
+                    char ch = tempExpression.charAt(i);
+                    if (ch == ']') {
+                        leftCnt--;
+                        if (leftCnt <= 0) {
+                            list.add(DoubleBean.of(Array.class.getSimpleName(), expression.substring(idx + 1, i)));
+                            idx = i + 1;
+                            break;
+                        }
+                    } else if (ch == '[') {
+                        leftCnt++;
+                    }
+                }
+                if (i >= len) {
+                    throw new BaseRuntimeException("解析数组失败: expression: {}, successPart: {}, fail: {}", expression, list, expression.substring(idx));
+                }
+                continue;
+            }
+            if (c != '.') {
+                throw new BaseRuntimeException("分段首位不为 . 也不为 [, 解析复杂key失败: expression: {}, successPart: {}, fail: {}", expression, list, expression.substring(idx));
+            }
+            idx++;
+            if (idx >= len) {
+                throw new BaseRuntimeException("末尾为点");
+            }
+            c = tempExpression.charAt(idx);
+            if (c == '"') {
+                if (tempExpression.charAt(idx + 1) == '"') {
+                    throw new BaseRuntimeException("分段为空 \"\" " + expression);
+                }
+                // object "p1.p2.p3"
+                int tmp = tempExpression.indexOf('"', idx + 1);
+                if (tmp < 0) {
+                    throw new BaseRuntimeException("解析复杂key失败: expression: {}, successPart: {}, fail: {}", expression, list, expression.substring(idx));
+                }
+                list.add(DoubleBean.of(Object.class.getSimpleName(), expression.substring(idx + 1, tmp)));
+                idx = tmp + 1;
+            } else {
+                // object "p1.p2.p3", 首位不应该为 .
+                if (c == '.' || c == '[') {
+                    throw new BaseRuntimeException("分段解析失败, 发现两个连续的.. ., expression: {}, successPart: {}, fail: {}", expression, list, expression.substring(idx));
+                }
+                int tmpP = tempExpression.indexOf('.', idx);
+                int tmpL = tempExpression.indexOf("[", idx);
+                if (tmpP < 0) {
+                    if (tmpL < 0) {
+                        list.add(DoubleBean.of(Object.class.getSimpleName(), expression.substring(idx, expression.length())));
+                        idx = expression.length();
+                    } else {
+                        list.add(DoubleBean.of(Object.class.getSimpleName(), expression.substring(idx, tmpL)));
+                        idx = tmpL;
+                    }
+                } else {
+                    if (tmpL < 0) {
+                        list.add(DoubleBean.of(Object.class.getSimpleName(), expression.substring(idx, tmpP)));
+                        idx = tmpP;
+                    } else {
+                        int min = Math.min(tmpL, tmpP);
+                        list.add(DoubleBean.of(Object.class.getSimpleName(), expression.substring(idx, min)));
+                        idx = min;
+                    }
+                }
+            }
+        }
+        if (idx != len) {
+            throw new BaseRuntimeException("解析表达式失败: expression: {}, successPart: {}", expression, list);
+        }
+        return list;
     }
 
 }

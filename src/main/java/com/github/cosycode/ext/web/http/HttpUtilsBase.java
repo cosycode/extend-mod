@@ -5,6 +5,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +41,7 @@ public class HttpUtilsBase {
             if (connection.getResponseCode() == 200) {
                 is = connection.getInputStream();
                 // 封装输入流is，并指定字符集
-                br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
                 // 存放数据
                 StringBuffer sbf = new StringBuffer();
                 String temp = null;
@@ -195,8 +196,8 @@ public class HttpUtilsBase {
             if (connection.getResponseCode() == 200) {
                 is = connection.getInputStream();
                 // 对输入流对象进行包装:charset根据工做项目组的要求来设置
-                br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-                StringBuffer sbf = new StringBuffer();
+                br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+                StringBuilder sbf = new StringBuilder();
                 String temp = null;
                 // 循环遍历一行一行读取数据
                 while ((temp = br.readLine()) != null) {
@@ -246,7 +247,7 @@ public class HttpUtilsBase {
      * @return 拼接后字符串
      */
     public static String createLinkString(Map<String, String> params) {
-        List<String> keys = new ArrayList<String>(params.keySet());
+        List<String> keys = new ArrayList<>(params.keySet());
         Collections.sort(keys);
 
         StringBuilder prestr = new StringBuilder();
@@ -262,23 +263,4 @@ public class HttpUtilsBase {
         return prestr.toString();
     }
 
-
-    public static void main(String[] args) {
-        //        String url = "http://localhost:8082/api/conf/findConfList?type=1";
-        //        String getResult = HttpUtil.doGet(url);
-        //        System.out.println(getResult);
-        //
-        //        url = "http://localhost:8082/api/core/login";
-        //        JSONObject json = new JSONObject();
-        //        json.put("key", "==g43sEvsUcbcunFv3mHkIzlHO4iiUIT R7WwXuSVKTK0yugJnZSlr6qNbxsL8OqCUAFyCDCoRKQ882m6cTTi0q9uCJsq JJvxS+8mZVRP/7lWfEVt8/N9mKplUA68SWJEPSXyz4MDeFam766KEyvqZ99d");
-        //        String postResult = HttpUtil.doPost(url, json.toJSONString());
-        //        System.out.println(postResult);
-        //
-        //        url = "http://localhost:8082/api/test/testSendForm";
-        //        Map<String,String> map = new HashMap<>();
-        //        map.put("name", "测试表单请求");
-        //        String formResult = HttpUtil.doPostForm(url, map);
-        //        System.out.println(formResult);
-
-    }
 }
