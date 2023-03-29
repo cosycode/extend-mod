@@ -33,10 +33,7 @@ public class MyHttpResponse {
     public static final HttpClientResponseHandler<MyHttpResponse> DEFAULT_HANDLER = response -> {
         HttpEntity entity = response.getEntity();
         int responseCode = response.getCode();
-        if (responseCode >= 300) {
-            EntityUtils.consume(entity);
-            throw new HttpResponseException(responseCode, response.getReasonPhrase());
-        } else {
+        if ((responseCode < 300 && responseCode >= 200) || responseCode == 404) {
             final String responseData;
             if (entity == null) {
                 responseData = null;
@@ -48,6 +45,9 @@ public class MyHttpResponse {
                 }
             }
             return new MyHttpResponse(responseCode, responseData);
+        } else {
+            EntityUtils.consume(entity);
+            throw new HttpResponseException(responseCode, response.getReasonPhrase());
         }
     };
 
@@ -57,13 +57,17 @@ public class MyHttpResponse {
 
     public <T> T jsonParse(Class<T> tClass) {
         if (!isSuccess() || StringUtils.isBlank(data)) {
-            throw new BaseRuntimeException("can't convert to {}, ==> {}", tClass.getName(), this);
+            throw new BaseRuntimeException("can't convert to %s, ==> %s", tClass.getName(), this);
         }
         return JsonUtils.fromJson(data, tClass);
     }
 
     public boolean isSuccess() {
         return code == 200;
+    }
+
+    public boolean isCode(int number) {
+        return code == number;
     }
 
     public JsonNode toJsonNode() {

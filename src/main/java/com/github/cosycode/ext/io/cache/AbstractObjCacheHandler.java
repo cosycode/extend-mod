@@ -21,7 +21,7 @@ import java.nio.charset.StandardCharsets;
  * @since 0.2.2
  **/
 @AllArgsConstructor
-public abstract class AbstractCacheHandler<T extends ICacheStack> {
+public abstract class AbstractObjCacheHandler<T extends ICacheStack> {
 
     @Getter
     private String tag;
@@ -38,8 +38,8 @@ public abstract class AbstractCacheHandler<T extends ICacheStack> {
         put(null);
     }
 
-    public static <T extends ICacheStack> AbstractCacheHandler<T> geneMemoryCacheHandler(String tag) {
-        return new AbstractCacheHandler<T>(tag) {
+    public static <T extends ICacheStack> AbstractObjCacheHandler<T> geneMemoryCacheHandler(String tag) {
+        return new AbstractObjCacheHandler<T>(tag) {
 
             T value;
 
@@ -55,9 +55,9 @@ public abstract class AbstractCacheHandler<T extends ICacheStack> {
         };
     }
 
-    public static <T extends ICacheStack> AbstractCacheHandler<T> geneFileCacheHandler(String tag, @NonNull String filePath, Class<T> tClass) {
+    public static <T extends ICacheStack> AbstractObjCacheHandler<T> geneFileCacheHandler(String tag, @NonNull String filePath, Class<T> tClass) {
         // 此处 filePath 为闭包
-        return new AbstractCacheHandler<T>(tag + " => " + filePath) {
+        return new AbstractObjCacheHandler<T>(tag + " => " + filePath) {
 
             @Override
             public void put(T value) {

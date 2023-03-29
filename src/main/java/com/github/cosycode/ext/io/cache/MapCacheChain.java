@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * <b>Description : </b> 改对象维持一个 ICacheStack 的对象列表,
@@ -23,23 +24,42 @@ import java.util.Objects;
  **/
 @Slf4j
 @AllArgsConstructor
-public class CacheChain<T extends ICacheStack> {
+public class MapCacheChain<T> {
 
-    final List<AbstractCacheHandler<T>> cacheHandlerList;
+    final List<AbstractMapCacheHandler<T>> cacheHandlerList;
 
-    public T getData() {
+    public T getData(String key) {
         Objects.requireNonNull(cacheHandlerList);
         if (cacheHandlerList.isEmpty()) {
             throw new BaseRuntimeException("cacheHandlerList is empty");
         }
-        AbstractCacheHandler<T> firstHandler = cacheHandlerList.get(0);
-        T t = firstHandler.get();
-        if (t == null || !firstHandler.validate(t)) {
+        AbstractMapCacheHandler<T> firstHandler = cacheHandlerList.get(0);
+        T t = firstHandler.get(key);
+        if (t == null || !firstHandler.validate(key, t)) {
             synchronized (cacheHandlerList) {
-                t = firstHandler.get();
-                if (t == null || ! firstHandler.validate(t)) {
-                    Iterator<AbstractCacheHandler<T>> iterator = cacheHandlerList.iterator();
-                    return getData(iterator);
+                t = firstHandler.get(key);
+                if (t == null || ! firstHandler.validate(key, t)) {
+                    Iterator<AbstractMapCacheHandler<T>> iterator = cacheHandlerList.iterator();
+                    return getData(key, iterator, null);
+                }
+            }
+        }
+        return t;
+    }
+
+    public T getData(String key, Supplier<T> supplier) {
+        Objects.requireNonNull(cacheHandlerList);
+        if (cacheHandlerList.isEmpty()) {
+            throw new BaseRuntimeException("cacheHandlerList is empty");
+        }
+        AbstractMapCacheHandler<T> firstHandler = cacheHandlerList.get(0);
+        T t = firstHandler.get(key);
+        if (t == null || !firstHandler.validate(key, t)) {
+            synchronized (cacheHandlerList) {
+                t = firstHandler.get(key);
+                if (t == null || ! firstHandler.validate(key, t)) {
+                    Iterator<AbstractMapCacheHandler<T>> iterator = cacheHandlerList.iterator();
+                    return getData(key, iterator, supplier);
                 }
             }
         }
@@ -52,28 +72,31 @@ public class CacheChain<T extends ICacheStack> {
      * @param iterator 迭代器
      * @return 从 iterator 里面获取到的对象.
      */
-    private T getData(@NonNull Iterator<AbstractCacheHandler<T>> iterator) {
+    private T getData(String key, @NonNull Iterator<AbstractMapCacheHandler<T>> iterator, Supplier<T> supplier) {
         if (! iterator.hasNext()) {
+            if (supplier != null) {
+                return supplier.get();
+            }
             // 假如说最后 一级从 http 上面获取, 那么若该级别的 get 获取不到合法数据, 那么还应该有下一级.
             throw new BaseRuntimeException("cacheHandlerList 里面已经空了, 请确保最后一个 AbstractCacheHandler<T> 实例对象可以正确获取到元素");
         }
         /* 若是获取到元素则返回, */
-        AbstractCacheHandler<T> item = iterator.next();
-        T pop = item.get();
+        AbstractMapCacheHandler<T> item = iterator.next();
+        T pop = item.get(key);
         if (pop != null) {
-            boolean validate = item.validate(pop);
+            boolean validate = item.validate(key, pop);
             if (validate) {
                 return pop;
             } else {
                 log.debug("{}[{}] 中获取到的元素验证失败, 清除失效元素", item.getClass(), item.getTag());
-                item.clear();
+                item.clear(key);
             }
         }
-        pop = getData(iterator);
+        pop = getData(key, iterator, supplier);
         // 从下一个 AbstractCacheHandler<T> 获取到的元素不应该为 null
         Objects.requireNonNull(pop);
         log.debug("获取到有效元素, 将有效元素缓存进 {}[{}]", item.getClass(), item.getTag());
-        item.put(pop);
+        item.put(key, pop);
         return pop;
     }
 

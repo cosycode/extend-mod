@@ -1,6 +1,12 @@
 package com.github.cosycode.ext.dataformat;
 
 import com.github.cosycode.common.lang.BaseRuntimeException;
+import com.github.cosycode.common.util.io.FileSystemUtils;
+import com.github.cosycode.ext.se.util.JsonUtils;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvException;
@@ -13,6 +19,7 @@ import java.nio.file.Files;
 import java.text.ParseException;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * <b>Description : </b>
@@ -158,6 +165,55 @@ public class CsvUtils {
             mapList.add(json);
         }
         return mapList;
+    }
+
+    public static void jsonToCsv(String json, String csvFile) throws IOException{
+        List<JsonObject> objectList = new Gson().fromJson(json, new TypeToken<List<JsonObject>>() {}.getType());
+        Set<String> keySet = new HashSet<>();
+        List<Map<String, String>> collect = objectList.stream().map(it -> {
+            Map<String, String> map = new HashMap<>();
+            flatBean(map, it, "");
+            keySet.addAll(map.keySet());
+            return map;
+        }).collect(Collectors.toList());
+        if (collect.isEmpty()) {
+            return;
+        }
+
+        String[] fieldString = keySet.toArray(new String[0]);
+
+        Writer writer = new FileWriter(csvFile);
+        try (CSVWriter csvWriter = new CSVWriter(writer)) {
+            csvWriter.writeNext(fieldString);
+            for (Map<String, String> flatMap : collect) {
+                String[] strings = new String[fieldString.length];
+                for (int i = 0; i < fieldString.length; i++) {
+                    String key = fieldString[i];
+                    String value = flatMap.get(key);
+                    strings[i] = value;
+                }
+                csvWriter.writeNext(strings);
+            }
+        }
+    }
+
+
+    public static void flatBean(Map<String, String> map, JsonObject object, String prefixKey) {
+        Set<String> keySet = object.keySet();
+        for (String key : keySet) {
+            key = prefixKey + key;
+            JsonElement jsonElement = object.get(key);
+            if (jsonElement.isJsonPrimitive()) {
+                map.put(key, jsonElement.getAsJsonPrimitive().toString());
+            } else if (jsonElement.isJsonNull()) {
+                map.put(key, null);
+            } else if (jsonElement.isJsonObject()) {
+                JsonObject subObject = jsonElement.getAsJsonObject();
+                flatBean(map, subObject, key + ".");
+            } else if (jsonElement.isJsonArray()) {
+                map.put(key, jsonElement.toString());
+            }
+        }
     }
 
 }

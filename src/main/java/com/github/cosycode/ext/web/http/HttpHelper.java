@@ -1,5 +1,6 @@
 package com.github.cosycode.ext.web.http;
 
+import com.github.cosycode.ext.io.cache.AbstractKeyCacheHandler;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,8 @@ import java.util.function.Consumer;
 
 @Slf4j
 public class HttpHelper {
+
+    public static AbstractKeyCacheHandler<MyHttpRequest, MyHttpResponse> webCacheHandler;
 
     public static MyHttpRequest buildGet(String url) {
         return new MyHttpRequest(Method.GET.name(), url);
@@ -51,13 +54,26 @@ public class HttpHelper {
             if (preProcess != null) {
                 preProcess.accept(this);
             }
-            return send();
+            MyHttpResponse myHttpResponse = send();
+            if (myHttpResponse.isCode(404)) {
+                log.warn("[{}] {} ==> {}", method, requestUrl, myHttpResponse.data());
+            }
+            return myHttpResponse;
         }
 
         public MyHttpResponse send() throws IOException {
+            if (webCacheHandler == null) {
+                return doSend();
+            } else {
+                return webCacheHandler.computeIfAbsent(this, this::doSend);
+            }
+        }
+
+        private MyHttpResponse doSend() throws IOException {
             return HttpUtils.http(method, requestUrl, headers, params, jsonBody, MyHttpResponse.DEFAULT_HANDLER);
         }
 
     }
+
 
 }

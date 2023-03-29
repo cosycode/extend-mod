@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.github.cosycode.common.ext.bean.DoubleBean;
 import com.github.cosycode.common.lang.BaseRuntimeException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,9 +13,8 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.TreeMap;
+import java.lang.reflect.Array;
+import java.util.*;
 import java.util.function.UnaryOperator;
 
 /**
@@ -79,7 +79,7 @@ public class JsonUtils {
         if (sortJson.equals(sortJsonAfter)) {
             return t;
         }
-        throw new BaseRuntimeException("json 转换成 classOf T, 信息丢失, \n原来的 json: {}, 排序后的json: {}, \n转换成 {} 后的json: {}",
+        throw new BaseRuntimeException("json 转换成 classOf T, 信息丢失, \n原来的 json: %s, 排序后的json: %s, \n转换成 %s 后的json: %s",
             json, sortJson, classOfT.getName(), sortJsonAfter);
     }
 
@@ -99,7 +99,7 @@ public class JsonUtils {
         if (sortJson.equals(sortJsonAfter)) {
             return tList;
         }
-        throw new BaseRuntimeException("json 转换成 classOf T, 信息丢失, \n原来的 json: {}, 排序后的json: {}, \n转换成 List<{}> 后的json: {}",
+        throw new BaseRuntimeException("json 转换成 classOf T, 信息丢失, \n原来的 json: %s, 排序后的json: %s, \n转换成 List<%s> 后的json: %s",
             json, sortJson, classOfT.getName(), sortJsonAfter);
     }
 
@@ -151,7 +151,13 @@ public class JsonUtils {
 
         @Override
         public <T> List<T> fromJsonArray(String json, Class<T> classOfT) {
-            return new Gson().fromJson(json, new TypeToken<List<T>>(){}.getType());
+            Class<T[]> arrClass = (Class<T[]>) Array.newInstance(classOfT, 0).getClass();
+            return nativeFromJsonArray(json, arrClass);
+        }
+
+        private  <T> List<T> nativeFromJsonArray(String json, Class<T[]> classOfT) {
+            T[] ts = new Gson().fromJson(json, classOfT);
+            return Arrays.asList(ts);
         }
 
     }
@@ -171,7 +177,7 @@ public class JsonUtils {
             try {
                 return mapper.writeValueAsString(obj);
             } catch (JsonProcessingException e) {
-                throw new RuntimeException("writeValueAsString 异常", e);
+                throw new BaseRuntimeException("writeValueAsString 异常", e);
             }
         }
 
@@ -185,7 +191,7 @@ public class JsonUtils {
                 objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
                 return objectMapper.writeValueAsString(obj);
             } catch (JsonProcessingException e) {
-                throw new RuntimeException("writeValueAsString 异常", e);
+                throw new BaseRuntimeException("writeValueAsString 异常", e);
             }
         }
 
@@ -197,7 +203,7 @@ public class JsonUtils {
             try {
                 return mapper.readValue(json, clazz);
             } catch (JsonProcessingException e) {
-                throw new RuntimeException("fromJson 异常", e);
+                throw new BaseRuntimeException("fromJson 异常", e);
             }
         }
 
@@ -207,9 +213,10 @@ public class JsonUtils {
             try {
                 return mapper.readValue(json, listTypeReference);
             } catch (JsonProcessingException e) {
-                throw new RuntimeException("fromJsonArray", e);
+                throw new BaseRuntimeException("fromJsonArray", e);
             }
         }
 
     }
+
 }

@@ -1,5 +1,6 @@
 package com.github.cosycode.ext.web.http;
 
+import com.github.cosycode.common.util.otr.PrintTool;
 import com.github.cosycode.ext.se.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.ClientProtocolException;
@@ -63,11 +64,18 @@ public class HttpUtils {
             httpUriRequestBase.setEntity(new StringEntity(payload, StandardCharsets.UTF_8));
         }
 
-        String uuid = UUID.randomUUID().toString();
-        log.debug("{} [HTTP request ] [{}] \n {}\n{}", uuid, method, url, payload);
-        // 调用 HttpClient 的 execute 方法执行请求
-        T execute = Http5Client.getCloseableHttpClient().execute(httpUriRequestBase, responseHandler);
-        log.debug("{} [HTTP response] [{}] \n {}", uuid, method, execute);
+        String uuid = UUID.randomUUID().toString().substring(0, 9) + Thread.currentThread().getId();
+        T execute = null;
+        try {
+            log.info("{} [HTTP Req ] [{}] {}\n{}", uuid, method, url, payload);
+            // 调用 HttpClient 的 execute 方法执行请求
+            execute = Http5Client.getCloseableHttpClient().execute(httpUriRequestBase, responseHandler);
+        } catch (Exception e) {
+            log.error("{} [HTTP Error ] [{}] {}\n{}", uuid, method, url, payload);
+            throw e;
+        } finally {
+            log.info("{} [HTTP Resp] [{}] \n {}", uuid, method, execute);
+        }
         return execute;
     }
 
