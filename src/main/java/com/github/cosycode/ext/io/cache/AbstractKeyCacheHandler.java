@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
 import java.io.IOException;
+import java.util.function.Predicate;
 
 /**
  * <b>Description : </b>
@@ -20,7 +21,14 @@ public abstract class AbstractKeyCacheHandler<P, R> {
 
     AbstractMapCacheHandler<R> mapCacheHandler;
 
-    public R computeIfAbsent(P p, @NonNull SupplierWithThrow<R, IOException> supplier) throws IOException {
+    /**
+     *
+     * @param p key
+     * @param supplier for getting cache.
+     * @param validate judge whether the response is valid. save only if the response is valid.
+     * @return response.
+     */
+    public R computeIfAbsent(P p, @NonNull SupplierWithThrow<R, IOException> supplier, Predicate<R> validate) throws IOException {
         String requestKey = "";
         boolean useCache = filter(p);
         if (useCache) {
@@ -32,11 +40,16 @@ public abstract class AbstractKeyCacheHandler<P, R> {
         }
         R response = supplier.get();
         if (useCache) {
-            put(requestKey, response);
+            if (validate == null || validate.test(response)) {
+                put(requestKey, response);
+            }
         }
         return response;
     }
 
+    /**
+     * judge whether it should use cache, generally, it will use cache only for get method.
+     */
     public abstract boolean filter(P p);
 
     public abstract String computeKey(P p);

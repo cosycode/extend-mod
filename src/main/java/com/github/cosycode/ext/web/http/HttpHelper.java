@@ -50,6 +50,11 @@ public class HttpHelper {
             this.requestUrl = requestUrl;
         }
 
+        /**
+         * 发送之前, 经过 preProcess 进行处理, 之后将消息转给 send 方法
+         *
+         * @param preProcess 请求之前对请求数据进行处理
+         */
         public MyHttpResponse send(Consumer<MyHttpRequest> preProcess) throws IOException {
             if (preProcess != null) {
                 preProcess.accept(this);
@@ -61,11 +66,16 @@ public class HttpHelper {
             return myHttpResponse;
         }
 
+        /**
+         * 发送请求之前事项
+         *
+         * 1. 判断是否使用缓存.
+         */
         public MyHttpResponse send() throws IOException {
             if (webCacheHandler == null) {
                 return doSend();
             } else {
-                return webCacheHandler.computeIfAbsent(this, this::doSend);
+                return webCacheHandler.computeIfAbsent(this, this::doSend, r -> ! r.isCode(429));
             }
         }
 

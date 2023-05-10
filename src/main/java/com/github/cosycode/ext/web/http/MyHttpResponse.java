@@ -31,10 +31,10 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 public class MyHttpResponse {
 
     public static final HttpClientResponseHandler<MyHttpResponse> DEFAULT_HANDLER = response -> {
-        HttpEntity entity = response.getEntity();
         int responseCode = response.getCode();
-        if ((responseCode < 300 && responseCode >= 200) || responseCode == 404) {
-            final String responseData;
+        final String responseData;
+        HttpEntity entity = response.getEntity();
+        if ((responseCode < 500 && responseCode >= 200)) {
             if (entity == null) {
                 responseData = null;
             } else {
@@ -46,17 +46,21 @@ public class MyHttpResponse {
             }
             return new MyHttpResponse(responseCode, responseData);
         } else {
-            EntityUtils.consume(entity);
-            throw new HttpResponseException(responseCode, response.getReasonPhrase());
+            try {
+                responseData = EntityUtils.toString(entity);
+                return new MyHttpResponse(responseCode, responseData);
+            } catch (ParseException var3) {
+                EntityUtils.consume(entity);
+                throw new HttpResponseException(responseCode, response.getReasonPhrase());
+            }
         }
     };
 
     private final int code;
-
     private final String data;
 
     public <T> T jsonParse(Class<T> tClass) {
-        if (!isSuccess() || StringUtils.isBlank(data)) {
+        if (! isSuccess() || StringUtils.isBlank(data)) {
             throw new BaseRuntimeException("can't convert to %s, ==> %s", tClass.getName(), this);
         }
         return JsonUtils.fromJson(data, tClass);
