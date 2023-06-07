@@ -4,8 +4,7 @@ import com.github.cosycode.common.lang.BaseRuntimeException;
 import com.github.cosycode.ext.se.json.JsonHelper;
 import com.github.cosycode.ext.se.json.JsonNode;
 import com.github.cosycode.ext.se.util.JsonUtils;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
@@ -24,9 +23,8 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
  *
  * @author pengfchen
  **/
-@Getter
+@Data
 @Accessors(fluent = true)
-@AllArgsConstructor
 @ToString
 public class MyHttpResponse {
 
@@ -58,9 +56,15 @@ public class MyHttpResponse {
 
     private final int code;
     private final String data;
+    private String contentType;
+
+    public MyHttpResponse(int code, String data) {
+        this.code = code;
+        this.data = data;
+    }
 
     public <T> T jsonParse(Class<T> tClass) {
-        if (! isSuccess() || StringUtils.isBlank(data)) {
+        if (!isSuccess() || StringUtils.isBlank(data)) {
             throw new BaseRuntimeException("can't convert to %s, ==> %s", tClass.getName(), this);
         }
         return JsonUtils.fromJson(data, tClass);

@@ -1,6 +1,5 @@
 package com.github.cosycode.ext.web.http;
 
-
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -11,6 +10,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * <b>Description : </b> http 调用的 基础工具类
+ * <p>
+ * <b>created in </b> 2022/12
+ *
+ * @author CPF
+ **/
+@SuppressWarnings("all")
 public class HttpUtilsBase {
 
     /**
@@ -23,7 +30,8 @@ public class HttpUtilsBase {
         HttpURLConnection connection = null;
         InputStream is = null;
         BufferedReader br = null;
-        String result = null;// 返回结果字符串
+        // 返回结果字符串
+        String result = null;
         try {
             // 建立远程url链接对象
             URL url = new URL(httpurl);
@@ -43,7 +51,7 @@ public class HttpUtilsBase {
                 // 封装输入流is，并指定字符集
                 br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
                 // 存放数据
-                StringBuffer sbf = new StringBuffer();
+                StringBuilder sbf = new StringBuilder();
                 String temp = null;
                 while ((temp = br.readLine()) != null) {
                     sbf.append(temp);
@@ -51,8 +59,6 @@ public class HttpUtilsBase {
                 }
                 result = sbf.toString();
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -117,7 +123,7 @@ public class HttpUtilsBase {
                 is = connection.getInputStream();
                 // 对输入流对象进行包装:charset根据工做项目组的要求来设置
                 br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-                StringBuffer sbf = new StringBuffer();
+                StringBuilder sbf = new StringBuilder();
                 String temp = null;
                 // 循环遍历一行一行读取数据
                 while ((temp = br.readLine()) != null) {
@@ -126,8 +132,6 @@ public class HttpUtilsBase {
                 }
                 result = sbf.toString();
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -154,6 +158,7 @@ public class HttpUtilsBase {
                 }
             }
             // 断开与远程地址url的链接
+            assert connection != null;
             connection.disconnect();
         }
         return result;
@@ -254,7 +259,8 @@ public class HttpUtilsBase {
         for (int i = 0; i < keys.size(); i++) {
             String key = keys.get(i);
             String value = params.get(key);
-            if (i == keys.size() - 1) {// 拼接时，不包括最后一个&字符
+            // 拼接时，不包括最后一个&字符
+            if (i == keys.size() - 1) {
                 prestr.append(key).append("=").append(value);
             } else {
                 prestr.append(key).append("=").append(value).append("&");

@@ -1,89 +1,80 @@
 package com.github.cosycode.ext.web.http;
 
-import com.github.cosycode.ext.io.cache.AbstractKeyCacheHandler;
-import lombok.Data;
-import lombok.experimental.Accessors;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.core5.http.Method;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * <b>Description : </b> http 调用的 工具类
+ * <p>
+ * <b>created in </b> 2022/12
+ *
+ * @author CPF
+ **/
 @Slf4j
 public class HttpHelper {
 
-    public static AbstractKeyCacheHandler<MyHttpRequest, MyHttpResponse> webCacheHandler;
-
-    public static MyHttpRequest buildGet(String url) {
-        return new MyHttpRequest(Method.GET.name(), url);
+    private HttpHelper() {
     }
 
-    public static MyHttpRequest buildPut(String url) {
-        return new MyHttpRequest(Method.PUT.name(), url);
+    public static MyHttpRequestHelper buildGet(String url) {
+        return new MyHttpRequestHelper(Method.GET.name(), url);
     }
 
-    public static MyHttpRequest buildPost(String url) {
-        return new MyHttpRequest(Method.POST.name(), url);
+    public static MyHttpRequestHelper buildPut(String url) {
+        return new MyHttpRequestHelper(Method.PUT.name(), url);
     }
 
-    public static MyHttpRequest buildDelete(String url) {
-        return new MyHttpRequest(Method.DELETE.name(), url);
+    public static MyHttpRequestHelper buildPost(String url) {
+        return new MyHttpRequestHelper(Method.POST.name(), url);
     }
 
-    public static MyHttpRequest buildPatch(String url) {
-        return new MyHttpRequest(Method.PATCH.name(), url);
+    public static MyHttpRequestHelper buildDelete(String url) {
+        return new MyHttpRequestHelper(Method.DELETE.name(), url);
     }
 
-    @Data
-    @Accessors(fluent = true)
-    public static class MyHttpRequest {
+    public static MyHttpRequestHelper buildPatch(String url) {
+        return new MyHttpRequestHelper(Method.PATCH.name(), url);
+    }
 
-        private String method;
-        private Map<String, Object> headers;
-        private String requestUrl;
-        private Map<String, String> params;
-        private Object jsonBody;
+    public static class MyHttpRequestHelper extends MyHttpRequest {
 
-        public MyHttpRequest(String method, String requestUrl) {
-            this.method = method;
-            this.requestUrl = requestUrl;
-        }
-
-        /**
-         * 发送之前, 经过 preProcess 进行处理, 之后将消息转给 send 方法
-         *
-         * @param preProcess 请求之前对请求数据进行处理
-         */
-        public MyHttpResponse send(Consumer<MyHttpRequest> preProcess) throws IOException {
-            if (preProcess != null) {
-                preProcess.accept(this);
-            }
-            MyHttpResponse myHttpResponse = send();
-            if (myHttpResponse.isCode(404)) {
-                log.warn("[{}] {} ==> {}", method, requestUrl, myHttpResponse.data());
-            }
-            return myHttpResponse;
+        public MyHttpRequestHelper(String method, String requestUrl) {
+            super(method, requestUrl);
         }
 
         /**
          * 发送请求之前事项
-         *
-         * 1. 判断是否使用缓存.
          */
-        public MyHttpResponse send() throws IOException {
-            if (webCacheHandler == null) {
-                return doSend();
-            } else {
-                return webCacheHandler.computeIfAbsent(this, this::doSend, r -> ! r.isCode(429));
-            }
+        public MyHttpResponse send(@NonNull Consumer<MyHttpRequest> consumer) throws IOException {
+            return MyHttpClient.send(this, Http5ClientConfig.getCloseableHttpClient(), null, MyHttpResponse.DEFAULT_HANDLER, consumer, null);
         }
 
-        private MyHttpResponse doSend() throws IOException {
-            return HttpUtils.http(method, requestUrl, headers, params, jsonBody, MyHttpResponse.DEFAULT_HANDLER);
+        /**
+         * 发送请求之前事项
+         */
+        public MyHttpResponse sendBy(@NonNull MyHttpClient client) throws IOException {
+            return client.send(this);
+        }
+
+        /**
+         * 发送请求之前事项
+         */
+        public MyHttpResponse sendBy() throws IOException {
+            return MyHttpClient.DEFAULT_INSTANCE.instance().send(this);
+        }
+
+        public MyHttpResponse downloadBy(@NonNull MyHttpClient client, String savePath) throws IOException {
+            return client.download(this, savePath);
+        }
+
+        public MyHttpResponse downloadBy(String savePath) throws IOException {
+            return MyHttpClient.DEFAULT_INSTANCE.instance().download(this, savePath);
         }
 
     }
-
 
 }

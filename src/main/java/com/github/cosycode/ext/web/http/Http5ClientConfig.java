@@ -36,12 +36,12 @@ import java.util.concurrent.TimeUnit;
  * @since 1.0
  **/
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class Http5Client {
+public class Http5ClientConfig {
 
     private static final int MAX_CONN_TOTAL = 200;
     private static final int CONNECT_TIME_OUT = 120;
 
-    private static LazySingleton<CloseableHttpClient> defaultCloseableHttpClient = LazySingleton.of(Http5Client::defaultHttpClientBuilder);
+    private static final LazySingleton<CloseableHttpClient> defaultCloseableHttpClient = LazySingleton.of(Http5ClientConfig::defaultHttpClient);
 
     /**
      * 从池子中获取连接
@@ -52,39 +52,43 @@ public class Http5Client {
         return defaultCloseableHttpClient.instance();
     }
 
-    private static CloseableHttpClient defaultHttpClientBuilder() {
-        return HttpClientBuilder.create()
-            .setConnectionManager(defaultHttpClientConnectionManager())
-            .evictIdleConnections(TimeValue.ofMinutes(1))
-            .disableAutomaticRetries()
-            // set ConnectManager to shared, the Connection will not be closed, otherwise the exception may be thrown: `Connection pool shut down`
-            .setConnectionManagerShared(true)
-            // Set to persistent connection.
-            .setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy())
-            .setDefaultRequestConfig(
-                RequestConfig.custom()
-                    .setResponseTimeout(180, TimeUnit.SECONDS)
-                    .setConnectionRequestTimeout(30, TimeUnit.SECONDS)
-                    .build()
-            ).build();
+    public static CloseableHttpClient defaultHttpClient() {
+        return defaultHttpClientBuilder().build();
     }
 
-    private static HttpClientConnectionManager defaultHttpClientConnectionManager() {
+    public static HttpClientBuilder defaultHttpClientBuilder() {
+        return HttpClientBuilder.create()
+                .setConnectionManager(defaultHttpClientConnectionManager())
+                .evictIdleConnections(TimeValue.ofMinutes(1))
+                .disableAutomaticRetries()
+                // set ConnectManager to shared, the Connection will not be closed, otherwise the exception may be thrown: `Connection pool shut down`
+                .setConnectionManagerShared(true)
+                // Set to persistent connection.
+                .setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy())
+                .setDefaultRequestConfig(
+                        RequestConfig.custom()
+                                .setResponseTimeout(180, TimeUnit.SECONDS)
+                                .setConnectionRequestTimeout(30, TimeUnit.SECONDS)
+                                .build()
+                );
+    }
+
+    public static HttpClientConnectionManager defaultHttpClientConnectionManager() {
         return PoolingHttpClientConnectionManagerBuilder.create()
-            .setSSLSocketFactory(getSSLFactory())
-            .setMaxConnPerRoute(MAX_CONN_TOTAL - 1)
-            .setMaxConnTotal(MAX_CONN_TOTAL)
-            .setDefaultConnectionConfig(
-                ConnectionConfig.custom()
-                    .setConnectTimeout(Timeout.ofSeconds(CONNECT_TIME_OUT))
-                    .setValidateAfterInactivity(TimeValue.ofSeconds(10))
-                    .build()
-            )
-            .setDefaultSocketConfig(
-                SocketConfig.custom()
-                    .setSoTimeout(5, TimeUnit.SECONDS)
-                    .build()
-            ).build();
+                .setSSLSocketFactory(getSSLFactory())
+                .setMaxConnPerRoute(MAX_CONN_TOTAL - 1)
+                .setMaxConnTotal(MAX_CONN_TOTAL)
+                .setDefaultConnectionConfig(
+                        ConnectionConfig.custom()
+                                .setConnectTimeout(Timeout.ofSeconds(CONNECT_TIME_OUT))
+                                .setValidateAfterInactivity(TimeValue.ofSeconds(10))
+                                .build()
+                )
+                .setDefaultSocketConfig(
+                        SocketConfig.custom()
+                                .setSoTimeout(5, TimeUnit.SECONDS)
+                                .build()
+                ).build();
     }
 
     /**
@@ -93,7 +97,7 @@ public class Http5Client {
      * 跳过 ssl 认证, 解决报错 sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
      */
     @SuppressWarnings("all")
-    private static SSLConnectionSocketFactory getSSLFactory() {
+    public static SSLConnectionSocketFactory getSSLFactory() {
         X509ExtendedTrustManager trustManager = new X509ExtendedTrustManager() {
             @Override
             public void checkClientTrusted(X509Certificate[] x509Certificates, String s, Socket socket) {

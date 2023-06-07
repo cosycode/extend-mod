@@ -1,14 +1,17 @@
 package com.github.cosycode.ext.web.http;
 
-import com.github.cosycode.common.util.otr.PrintTool;
 import com.github.cosycode.ext.se.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.classic.methods.*;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.core5.annotation.Contract;
 import org.apache.hc.core5.annotation.ThreadingBehavior;
-import org.apache.hc.core5.http.*;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
@@ -24,12 +27,22 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * <b>Description : </b> http 调用的 工具类, 基于 HttpClient5 较为纯净.
+ * <p>
+ * <b>created in </b> 2022/12
+ *
+ * @author CPF
+ **/
 @Slf4j
 public class HttpUtils {
 
+    private HttpUtils() {
+    }
+
     private static String createRequestUrl(String url, Map<String, String> paramMap) {
         // Map<String, String> params 转换为 List<BasicNameValuePair> param
-        if (paramMap != null && ! paramMap.isEmpty()) {
+        if (paramMap != null && !paramMap.isEmpty()) {
             List<NameValuePair> paramList = new ArrayList<>();
             for (Map.Entry<String, String> stringEntry : paramMap.entrySet()) {
                 paramList.add(new BasicNameValuePair(stringEntry.getKey(), stringEntry.getValue()));
@@ -47,12 +60,17 @@ public class HttpUtils {
 
     public static <T> T http(String method, String requestUrl, Map<String, Object> headers, Map<String, String> params,
                              Object jsonBody, HttpClientResponseHandler<? extends T> responseHandler) throws IOException {
+        return http(Http5ClientConfig.getCloseableHttpClient(), method, requestUrl, headers, params, jsonBody, responseHandler);
+    }
+
+    public static <T> T http(CloseableHttpClient httpClient, String method, String requestUrl, Map<String, Object> headers, Map<String, String> params,
+                             Object jsonBody, HttpClientResponseHandler<? extends T> responseHandler) throws IOException {
         // 拼接 url
         String url = createRequestUrl(requestUrl, params);
         // 创建 HttpUriRequestBase 对象
         HttpUriRequestBase httpUriRequestBase = new HttpUriRequestBase(method, URI.create(url));
         // Map<String, Object> headers 转换为 List<Header>
-        if (headers != null && ! headers.isEmpty()) {
+        if (headers != null && !headers.isEmpty()) {
             for (Map.Entry<String, Object> objectEntry : headers.entrySet()) {
                 httpUriRequestBase.addHeader(new BasicHeader(objectEntry.getKey(), objectEntry.getValue()));
             }
@@ -69,7 +87,7 @@ public class HttpUtils {
         try {
             log.info("{} [HTTP Req ] [{}] {}\n{}", uuid, method, url, payload);
             // 调用 HttpClient 的 execute 方法执行请求
-            execute = Http5Client.getCloseableHttpClient().execute(httpUriRequestBase, responseHandler);
+            execute = httpClient.execute(httpUriRequestBase, responseHandler);
         } catch (Exception e) {
             log.error("{} [HTTP Error ] [{}] {}\n{}", uuid, method, url, payload);
             throw e;
@@ -97,6 +115,7 @@ public class HttpUtils {
 
     @Contract(threading = ThreadingBehavior.STATELESS)
     public static class MyStringHttpClientResponseHandler implements HttpClientResponseHandler<String> {
+        @Override
         public String handleResponse(ClassicHttpResponse response) throws IOException {
             HttpEntity entity = response.getEntity();
             if (response.getCode() >= 300) {
