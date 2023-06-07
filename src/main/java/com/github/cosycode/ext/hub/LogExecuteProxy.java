@@ -1,5 +1,6 @@
 package com.github.cosycode.ext.hub;
 
+import lombok.extern.slf4j.Slf4j;
 import java.util.Arrays;
 import java.util.function.BiFunction;
 
@@ -10,6 +11,7 @@ import java.util.function.BiFunction;
  *
  * @author CPF
  **/
+@Slf4j
 public class LogExecuteProxy<T, P, R> extends AbstractClosureProxy<T, P, R> {
 
     public LogExecuteProxy(T then) {
@@ -24,12 +26,12 @@ public class LogExecuteProxy<T, P, R> extends AbstractClosureProxy<T, P, R> {
     public R closureFunction(P params) {
         if (params != null) {
             if (params.getClass().isArray()) {
-                System.out.println(Arrays.toString((Object[]) params));
+                log.info(Arrays.toString((Object[]) params));
             } else {
-                System.out.println(params);
+                log.info(params.toString());
             }
         } else {
-            System.out.println("null");
+            log.info("null");
         }
         return biFunction.apply(functional, params);
     }

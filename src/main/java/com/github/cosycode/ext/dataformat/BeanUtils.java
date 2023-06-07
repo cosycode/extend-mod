@@ -1,5 +1,6 @@
 package com.github.cosycode.ext.dataformat;
 
+
 import java.lang.reflect.Field;
 
 /**
@@ -9,9 +10,11 @@ import java.lang.reflect.Field;
  * </p>
  *
  * @author pengfchen
- * @since
+ * @since 0.2.2
  **/
 public class BeanUtils {
+
+    private BeanUtils() {}
 
     public static String[] getFieldString(Class<?> clazz) {
         Field[] declaredFields = clazz.getDeclaredFields();

@@ -1,5 +1,6 @@
 package com.github.cosycode.ext.fileinport;
 
+import com.github.cosycode.ext.fileimport.base.ExcelType;
 import com.github.cosycode.ext.fileimport.excel.ExcelResolver;
 import com.github.cosycode.ext.fileimport.excel.ParsedSheetHandler;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -24,7 +25,7 @@ public class extractAllFieldOnExcel {
         FileInputStream fileInputStream = new FileInputStream(file);
 
         List<ParsedSheetHandler<?>> resultList = new ArrayList<>();
-        try (Workbook workbook = ExcelResolver.getMatchWorkbook(ExcelResolver.ExcelType.XLS, fileInputStream);
+        try (Workbook workbook = ExcelResolver.getMatchWorkbook(ExcelType.XLS, fileInputStream);
              FileWriter writer = new FileWriter(out)) {
             for (int index = 0, len = workbook.getNumberOfSheets(); index < len; index++) {
                 Sheet sheet = workbook.getSheetAt(index);

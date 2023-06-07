@@ -1,12 +1,12 @@
 package com.github.cosycode.ext.se.util;
 
+import com.github.cosycode.common.lang.BaseRuntimeException;
 import com.github.cosycode.common.util.io.FileSystemUtils;
 import com.github.cosycode.common.util.io.IoUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -36,7 +36,7 @@ public class DataConvertUtils {
         try (InputStream in = Files.newInputStream(file.toPath())) {
             final long length = file.length();
             if (length > Integer.MAX_VALUE) {
-                throw new RuntimeException("the file is too large");
+                throw new BaseRuntimeException("the file is too large");
             }
             byte[] bytes = new byte[(int) length];
             final int read = in.read(bytes);
@@ -61,9 +61,7 @@ public class DataConvertUtils {
         IoUtils.writeFile(savePath, bytes);
     }
 
-    public static void onceExe(Runnable runnable) {
 
-    }
 
 
 }

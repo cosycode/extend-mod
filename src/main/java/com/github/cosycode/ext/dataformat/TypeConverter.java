@@ -14,9 +14,11 @@ import java.util.Date;
  * </p>
  *
  * @author pengfchen
- * @since
+ * @since 0.2.2
  **/
 public class TypeConverter {
+
+    private TypeConverter(){}
 
     /**
      *
@@ -39,9 +41,8 @@ public class TypeConverter {
     }
 
     /**
-     *
-     * TODO type convert
-     * @return
+     * 将一个字符串 转换成对应类型,
+     * @return 转换成为的字符串类型
      */
     public static <T> T convertStringToObj(String string, Class<T> type) throws ParseException {
         if (type.equals(String.class)) {

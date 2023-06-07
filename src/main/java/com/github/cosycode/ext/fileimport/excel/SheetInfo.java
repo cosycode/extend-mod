@@ -16,6 +16,6 @@ public class SheetInfo {
     /**
      * sheet 表名
      */
-    String SheetName;
+    String sheetName;
 
 }

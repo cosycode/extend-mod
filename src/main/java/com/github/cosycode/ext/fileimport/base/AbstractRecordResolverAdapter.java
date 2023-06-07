@@ -17,7 +17,7 @@ import java.util.Map;
  *
  * @author CPF
  **/
-public abstract class RecordResolverAdapter<T> {
+public abstract class AbstractRecordResolverAdapter<T> {
 
     /**
      * excel 行的映射对象
