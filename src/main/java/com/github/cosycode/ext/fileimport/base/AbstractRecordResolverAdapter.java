@@ -1,11 +1,10 @@
 package com.github.cosycode.ext.fileimport.base;
 
+import com.github.cosycode.common.base.IClassType;
 import com.github.cosycode.ext.fileimport.excel.ParsedSheetHandler;
 import com.github.cosycode.ext.fileimport.excel.SheetInfo;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +16,7 @@ import java.util.Map;
  *
  * @author CPF
  **/
-public abstract class AbstractRecordResolverAdapter<T> {
+public abstract class AbstractRecordResolverAdapter<T> implements IClassType<T> {
 
     /**
      * excel 行的映射对象
@@ -46,19 +45,6 @@ public abstract class AbstractRecordResolverAdapter<T> {
      * @param recordFile sheet名称
      */
     public abstract boolean isMatch(Object recordFile);
-
-    /**
-     * 获取当前类 T 后代继承的 T.class
-     */
-    @SuppressWarnings("unchecked")
-    public Class<T> getTemplateClass() {
-        Class<?> clazz = getClass();
-        while (!(clazz.getGenericSuperclass() instanceof ParameterizedType)) {
-            clazz = clazz.getSuperclass();
-        }
-        Type type = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0];
-        return (Class<T>) type;
-    }
 
     /**
      * 对解析后的sheet进行二次处理

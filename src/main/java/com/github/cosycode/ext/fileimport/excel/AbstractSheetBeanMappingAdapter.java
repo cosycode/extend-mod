@@ -1,11 +1,10 @@
 package com.github.cosycode.ext.fileimport.excel;
 
+import com.github.cosycode.common.base.IClassType;
 import com.github.cosycode.common.util.common.BeanUtils;
 import com.github.cosycode.ext.fileimport.base.RecordMapping;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +16,7 @@ import java.util.Map;
  *
  * @author CPF
  **/
-public abstract class AbstractSheetBeanMappingAdapter<T> {
+public abstract class AbstractSheetBeanMappingAdapter<T> implements IClassType<T> {
 
     /**
      * excel 行的映射对象
@@ -48,19 +47,6 @@ public abstract class AbstractSheetBeanMappingAdapter<T> {
     protected abstract void completeSheetBeanMapping(RecordMapping mapping);
 
     /**
-     * 获取当前类 T 后代继承的 T.class
-     */
-    @SuppressWarnings("unchecked")
-    public Class<T> getTemplateClass() {
-        Class<?> clazz = getClass();
-        while (!(clazz.getGenericSuperclass() instanceof ParameterizedType)) {
-            clazz = clazz.getSuperclass();
-        }
-        Type type = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0];
-        return (Class<T>) type;
-    }
-
-    /**
      * 对解析后的sheet进行二次处理
      *
      * @param maps 解析后的sheet数据
@@ -68,7 +54,7 @@ public abstract class AbstractSheetBeanMappingAdapter<T> {
      */
     protected ParsedSheetHandler<T> disposeParsedSheet(SheetInfo sheetInfo, List<Map<String, Object>> maps) throws InvocationTargetException, IllegalAccessException, InstantiationException {
         // 获取当前类 T 后代继承的 T.class
-        Class<T> tClass = getTemplateClass();
+        Class<T> tClass = classType();
         // 将数据转化为 list
         List<T> list = BeanUtils.mapListToBeanList(maps, tClass);
         // 转换之后最后执行操作
