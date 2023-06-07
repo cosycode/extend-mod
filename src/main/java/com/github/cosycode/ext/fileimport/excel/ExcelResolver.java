@@ -1,5 +1,7 @@
 package com.github.cosycode.ext.fileimport.excel;
 
+import com.github.cosycode.common.lang.BaseRuntimeException;
+import com.github.cosycode.ext.fileimport.base.ExcelType;
 import com.github.cosycode.ext.fileimport.base.FieldMapping;
 import com.github.cosycode.ext.fileimport.base.RecordMapping;
 import lombok.NonNull;
@@ -39,7 +41,7 @@ public class ExcelResolver {
         } else if (excelType == ExcelType.XLSX) {
             return new XSSFWorkbook(in);
         }
-        throw new RuntimeException("不支持的文件类型");
+        throw new BaseRuntimeException("不支持的文件类型");
     }
 
     /**
@@ -100,7 +102,7 @@ public class ExcelResolver {
                     continue;
                 }
                 if (collect.size() > 1) {
-                    throw new RuntimeException("函数调用错误, AbstractSheetBeanMappingAdapter 冲突, resolveQuoteExcel 解析时发现匹配的 SheetBeanMapping 有多个");
+                    throw new BaseRuntimeException("函数调用错误, AbstractSheetBeanMappingAdapter 冲突, resolveQuoteExcel 解析时发现匹配的 SheetBeanMapping 有多个");
                 }
                 AbstractSheetBeanMappingAdapter<?> relateAdapter = collect.get(0);
                 SheetInfo sheetInfo = new SheetInfo();
@@ -159,7 +161,7 @@ public class ExcelResolver {
             final String temp = "excel中未发现必要的列, 请检查模板, <br> => 表名 : %s<br> => 列 : [%s]";
             String msg = String.format(temp, sheetName, StringUtils.join(notFoundHeaderName, ", "));
             log.warn(msg);
-            throw new RuntimeException(msg);
+            throw new BaseRuntimeException(msg);
         }
 
         // 3. 解析sheet数据
@@ -218,7 +220,7 @@ public class ExcelResolver {
                 String msg = String.format("解析单元格错误<br>=> 表名 : %s<br>=> 位置 : %s<br>=> 值 : %s<br>=> error : %s", sheetName, cellAddress, cell,
                         e.getMessage());
                 String desc = String.format("regex : %s", fieldMapping.getRuleRegex());
-                throw new RuntimeException(msg + desc);
+                throw new BaseRuntimeException(msg + desc);
             }
         });
         return record;
@@ -285,25 +287,6 @@ public class ExcelResolver {
                 return null;
         }
         return null;
-    }
-
-
-    /**
-     * excel 的类型, 当前类支持解析的 Excel 文件类型枚举类
-     */
-    public enum ExcelType {
-        XLS,
-        XLSX;
-
-        public static ExcelType getByJudgeSuffix(String fileName) {
-            if (fileName.endsWith(".xls")) {
-                return XLS;
-            } else if (fileName.endsWith(".xlsx")) {
-                return XLSX;
-            } else {
-                return null;
-            }
-        }
     }
 
 }

@@ -150,17 +150,20 @@ public class StandardGrid<T extends IMapGetter<String, Object>> extends JPanel {
         /**
          * 是否有序号列
          */
+        @Setter
         private boolean serialNumberAble = true;
 
         /**
          * 表格是否可以编辑
          */
+        @Setter
         private boolean cellEditable = true;
 
         @Getter
         @Setter
         private String orderHeaderName = "";
 
+        @Override
         public String getColumnName(int column) {
             if (serialNumberAble) {
                 if (column == 0) {
@@ -172,10 +175,12 @@ public class StandardGrid<T extends IMapGetter<String, Object>> extends JPanel {
             return columnConfigList.get(column).getText();
         }
 
+        @Override
         public int getRowCount() {
             return data.size();
         }
 
+        @Override
         public int getColumnCount() {
             if (serialNumberAble) {
                 return columnConfigList.size() + 1;
@@ -183,6 +188,7 @@ public class StandardGrid<T extends IMapGetter<String, Object>> extends JPanel {
             return columnConfigList.size();
         }
 
+        @Override
         public Object getValueAt(int row, int col) {
             if (serialNumberAble) {
                 if (col == 0) {
@@ -196,6 +202,7 @@ public class StandardGrid<T extends IMapGetter<String, Object>> extends JPanel {
             return t.get(key);
         }
 
+        @Override
         public boolean isCellEditable(int row, int column) {
             if (serialNumberAble && column == 0) {
                 return false;
@@ -203,6 +210,7 @@ public class StandardGrid<T extends IMapGetter<String, Object>> extends JPanel {
             return cellEditable;
         }
 
+        @Override
         public void setValueAt(Object value, int row, int col) {
             if (serialNumberAble) {
                 if (col == 0) {

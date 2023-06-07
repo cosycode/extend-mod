@@ -19,6 +19,7 @@ public interface KeyReleasedListener extends KeyListener {
      * See the class description for {@link KeyEvent} for a definition of
      * a key typed event.
      */
+    @Override
     default void keyTyped(KeyEvent e) {
     }
 
@@ -27,6 +28,7 @@ public interface KeyReleasedListener extends KeyListener {
      * See the class description for {@link KeyEvent} for a definition of
      * a key pressed event.
      */
+    @Override
     default void keyPressed(KeyEvent e) {
     }
 
@@ -35,6 +37,7 @@ public interface KeyReleasedListener extends KeyListener {
      * See the class description for {@link KeyEvent} for a definition of
      * a key released event.
      */
+    @Override
     public void keyReleased(KeyEvent e);
 
 }

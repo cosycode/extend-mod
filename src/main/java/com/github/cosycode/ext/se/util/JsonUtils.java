@@ -167,7 +167,7 @@ public class JsonUtils {
         /**
          * jackson 转换对象, 线程安全, 可以单例
          */
-        public static final ObjectMapper mapper = new ObjectMapper();
+        public static final ObjectMapper MAPPER = new ObjectMapper();
 
         @Override
         public String toJson(Object obj) {
@@ -175,9 +175,9 @@ public class JsonUtils {
                 return "{}";
             }
             try {
-                return mapper.writeValueAsString(obj);
+                return MAPPER.writeValueAsString(obj);
             } catch (JsonProcessingException e) {
-                throw new BaseRuntimeException("writeValueAsString 异常", e);
+                throw new BaseRuntimeException("[JacksonParser] writeValueAsString 异常", e);
             }
         }
 
@@ -191,7 +191,7 @@ public class JsonUtils {
                 objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
                 return objectMapper.writeValueAsString(obj);
             } catch (JsonProcessingException e) {
-                throw new BaseRuntimeException("writeValueAsString 异常", e);
+                throw new BaseRuntimeException("[JacksonParser] writeValueAsString 异常", e);
             }
         }
 
@@ -201,9 +201,9 @@ public class JsonUtils {
                 return null;
             }
             try {
-                return mapper.readValue(json, clazz);
+                return MAPPER.readValue(json, clazz);
             } catch (JsonProcessingException e) {
-                throw new BaseRuntimeException("fromJson 异常", e);
+                throw new BaseRuntimeException("[JacksonParser] fromJson 异常", e);
             }
         }
 
@@ -211,9 +211,9 @@ public class JsonUtils {
         public <T> List<T> fromJsonArray(String json, Class<T> classOfT) {
             TypeReference<List<T>> listTypeReference = new TypeReference<List<T>>(){};
             try {
-                return mapper.readValue(json, listTypeReference);
+                return MAPPER.readValue(json, listTypeReference);
             } catch (JsonProcessingException e) {
-                throw new BaseRuntimeException("fromJsonArray", e);
+                throw new BaseRuntimeException("[JacksonParser] fromJsonArray", e);
             }
         }
 

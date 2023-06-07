@@ -44,17 +44,20 @@ public class FileUtils {
             bis.reset();
             if (!checked) {
                 while ((read = bis.read()) != -1) {
-                    if (read >= 0xF0)
+                    if (read >= 0xF0) {
                         break;
-                    if (0x80 <= read && read <= 0xBF) // 单独出现BF以下的，也算是GBK
+                    }
+                    if (0x80 <= read && read <= 0xBF) {
                         break;
+                    }
                     if (0xC0 <= read && read <= 0xDF) {
                         read = bis.read();
-                        if (0x80 <= read && read <= 0xBF) // 双字节 (0xC0 - 0xDF)
+                        if (0x80 <= read && read <= 0xBF) {
                             // (0x80 - 0xBF),也可能在GB编码内
                             continue;
-                        else
+                        } else {
                             break;
+                        }
                     } else if (0xE0 <= read && read <= 0xEF) { // 也有可能出错，但是几率较小
                         read = bis.read();
                         if (0x80 <= read && read <= 0xBF) {
@@ -62,10 +65,12 @@ public class FileUtils {
                             if (0x80 <= read && read <= 0xBF) {
                                 charset = "UTF-8";
                                 break;
-                            } else
+                            } else {
                                 break;
-                        } else
+                            }
+                        } else {
                             break;
+                        }
                     }
                 }
             }
