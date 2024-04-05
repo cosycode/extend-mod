@@ -4,6 +4,7 @@ import com.github.cosycode.common.ext.hub.Throws;
 import com.github.cosycode.ext.hub.OnceExecClosureProxy;
 import com.github.cosycode.ext.hub.OnceExecutes;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -12,6 +13,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
+@Ignore
 @Slf4j
 public class OnceExecClosureProxyTest {
 

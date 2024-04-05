@@ -204,7 +204,6 @@ public interface JsonNode {
          * <br/><b>case2: </b> p1.[4].p3
          * <br/><b>case3: </b> p1.[name=pfc].p3
          * <br/><b>case4: </b> p1.\\.p3
-         *
          * </p>
          *
          * @param jsonElement json element 对象
@@ -331,7 +330,7 @@ public interface JsonNode {
                 int tmpL = tempExpression.indexOf("[", idx);
                 if (tmpP < 0) {
                     if (tmpL < 0) {
-                        list.add(DoubleBean.of(Object.class.getSimpleName(), expression.substring(idx, expression.length())));
+                        list.add(DoubleBean.of(Object.class.getSimpleName(), expression.substring(idx)));
                         idx = expression.length();
                     } else {
                         list.add(DoubleBean.of(Object.class.getSimpleName(), expression.substring(idx, tmpL)));

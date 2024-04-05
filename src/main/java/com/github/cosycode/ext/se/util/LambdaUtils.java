@@ -4,6 +4,7 @@ import com.github.cosycode.common.ext.hub.Throws;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
@@ -20,10 +21,11 @@ import java.util.function.*;
  *
  * @author CPF
  **/
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LambdaUtils {
 
-    private static Map<Class<?>, SerializedLambda> CLASS_LAMBDA_CACHE = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, SerializedLambda> CLASS_LAMBDA_CACHE = new ConcurrentHashMap<>();
 
     /**
      * 当对象中没有
@@ -89,7 +91,7 @@ public class LambdaUtils {
                 lambda = (SerializedLambda) method.invoke(fn);
                 CLASS_LAMBDA_CACHE.put(fn.getClass(), lambda);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("failed to get SerializedLambda Object", e);
             }
         }
         return lambda;

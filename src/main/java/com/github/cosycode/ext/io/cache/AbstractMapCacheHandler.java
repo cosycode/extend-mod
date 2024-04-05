@@ -64,7 +64,7 @@ public abstract class AbstractMapCacheHandler<T> {
         // 此处 filePath 为闭包
         return new AbstractMapCacheHandler<T>(tag + " => " + filePath) {
 
-            private File file;
+            private final File file;
             private Properties properties;
 
             {
@@ -121,9 +121,7 @@ public abstract class AbstractMapCacheHandler<T> {
             public void put(String key, T value) {
                 File file = new File(getFilePath(key));
                 FileSystemUtils.insureFileExist(file);
-                Throws.runtimeEpt(() -> {
-                    IoUtils.writeFile(file.getPath(), JsonUtils.toJson(value).getBytes(StandardCharsets.UTF_8));
-                });
+                Throws.runtimeEpt(() -> IoUtils.writeFile(file.getPath(), JsonUtils.toJson(value).getBytes(StandardCharsets.UTF_8)));
             }
 
             @Override

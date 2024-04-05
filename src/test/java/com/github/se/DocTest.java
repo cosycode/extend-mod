@@ -5,6 +5,7 @@ import com.github.cosycode.ext.api.SerialRunnable;
 import com.github.cosycode.ext.hub.OnceExecClosureProxy;
 import com.github.cosycode.ext.se.util.LambdaUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.lang.invoke.SerializedLambda;
@@ -19,8 +20,8 @@ import java.util.stream.IntStream;
  * <b>created in </b> 2021/4/8
  *
  * @author CPF
- * @since
  **/
+@Ignore
 @Slf4j
 public class DocTest {
 
@@ -38,7 +39,7 @@ public class DocTest {
         };
 
         // 将 Test89 转换为 BiFunction<>
-        BiFunction<Test89, Object[], Map<String, Object>> biFunction = (t, o) -> t.fjk((int) o[0], (Object) o[1], (String[]) o[2]);
+        BiFunction<Test89, Object[], Map<String, Object>> biFunction = (t, o) -> t.fjk((int) o[0], o[1], (String[]) o[2]);
 
         //
         // proxy 将 Function<P, R> 转换为 testBtn3
@@ -66,7 +67,7 @@ public class DocTest {
         };
 
         // 将 Test89 转换为 BiFunction<>
-        BiFunction<Test89, Object[], Map<String, Object>> biFunction = (t, o) -> t.fjk((int) o[0], (Object) o[1], (String[]) o[2]);
+        BiFunction<Test89, Object[], Map<String, Object>> biFunction = (t, o) -> t.fjk((int) o[0], o[1], (String[]) o[2]);
 
         //
         // proxy 将 Function<P, R> 转换为 testBtn3

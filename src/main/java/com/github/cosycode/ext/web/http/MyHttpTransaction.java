@@ -38,7 +38,7 @@ public class MyHttpTransaction {
     }
 
     public <R> R send(@NonNull MyHttpTransactionFunction<R> responseDisposer) throws IOException {
-        return new Handler<R>(this.client, this.request, responseDisposer).sendRequest();
+        return new Handler<>(this.client, this.request, responseDisposer).sendRequest();
     }
 
     public <R> R sendAndCatchException(@NonNull MyHttpTransactionFunction<R> responseDisposer, BiFunction<Handler<R>, Exception, R> catchDisposer) {

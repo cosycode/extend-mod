@@ -67,7 +67,7 @@ public class MyHttpResponse {
     }
 
     public boolean isSuccess() {
-        return code == 200;
+        return code >= 200 && code < 300;
     }
 
     public boolean isCode(int number) {

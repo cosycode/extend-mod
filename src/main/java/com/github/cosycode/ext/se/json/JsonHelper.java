@@ -9,7 +9,6 @@ import com.google.gson.JsonElement;
  * </p>
  *
  * @author CPF
- * @since
  **/
 public abstract class JsonHelper {
 

@@ -123,7 +123,7 @@ public class FieldMapping<T> {
                     List<String> valueList = new ArrayList<>(strings.length);
                     for (String it : strings) {
                         it = it.trim();
-                        if (!"".equals(it)) {
+                        if (!it.isEmpty()) {
                             valueList.add(getDbSaveValue(it));
                         }
                     }

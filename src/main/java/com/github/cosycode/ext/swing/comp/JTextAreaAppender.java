@@ -26,7 +26,6 @@ import java.io.Serializable;
  * <b>Description : </b>
  * <p>
  * 自定义实现log4j2的输出源
- *
  * <b>@Plugin</b>..注解：这个注解，是为了在之后配置log4j2.xml时，指定的Appender Tag。
  * 构造函数：除了使用父类的以外，也可以增加一些自己的配置。
  * 重写append()方法：这里面需要实现具体的逻辑，日志的去向。

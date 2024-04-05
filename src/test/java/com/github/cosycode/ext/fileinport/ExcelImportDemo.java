@@ -1,6 +1,7 @@
 package com.github.cosycode.ext.fileinport;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * <b>Description : </b>
@@ -12,7 +13,7 @@ public class ExcelImportDemo {
 
     public static void main(String[] args) {
         final Method[] declaredMethods = Cindf.class.getDeclaredMethods();
-        System.out.println(declaredMethods);
+        System.out.println(Arrays.toString(declaredMethods));
     }
 
     public static class Cindf {

@@ -1,5 +1,7 @@
 package com.github.cosycode.ext.se.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.*;
 
 /**
@@ -8,8 +10,8 @@ import java.io.*;
  * <b>created in </b> 2021/4/30
  *
  * @author CPF
- * @since
  **/
+@Slf4j
 public class FileUtils {
 
     /**
@@ -17,7 +19,6 @@ public class FileUtils {
      *
      * @param fileName :file
      * @return 文件编码格式
-     * @throws Exception
      */
     public static String analysisTextFileEncode(File fileName) {
         try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fileName))) {
@@ -25,7 +26,7 @@ public class FileUtils {
             byte[] first3Bytes = new byte[3];
             boolean checked = false;
             bis.mark(0); // 读者注： bis.mark(0);修改为 bis.mark(100);我用过这段代码，需要修改上面标出的地方。
-            // Wagsn注：不过暂时使用正常，遂不改之
+            // Wagsn 注：不过暂时使用正常，遂不改之
             int read = bis.read(first3Bytes, 0, 3);
             if (read == -1) {
                 bis.close();
@@ -76,9 +77,9 @@ public class FileUtils {
             }
             return charset;
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            log.error("找不到指定文件", e);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("读取文件失败", e);
         }
         return "null";
     }

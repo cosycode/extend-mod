@@ -232,7 +232,6 @@ public class ExcelResolver {
      * @param cell   单元格
      * @param tClass 解析类型
      * @return 解析后的对象
-     * @throws ParseException
      */
     public static Object resolveCell(Cell cell, Class<?> tClass) throws ParseException {
         //跳过空单元格

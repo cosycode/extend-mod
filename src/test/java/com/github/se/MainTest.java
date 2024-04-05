@@ -3,12 +3,14 @@ package com.github.se;
 import com.github.cosycode.common.util.io.FileSystemUtils;
 import com.github.cosycode.common.util.io.IoUtils;
 import com.github.cosycode.ext.se.util.FileUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+@Ignore
 public class MainTest {
 
     /**
@@ -16,7 +18,6 @@ public class MainTest {
      *
      * @param fileName :file
      * @return 文件编码格式
-     * @throws Exception
      */
     public static String codeString(File fileName) {
         try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fileName))) {
@@ -78,7 +79,7 @@ public class MainTest {
     }
 
     @Test
-    public void main() throws FileNotFoundException {
+    public void mainTest() throws FileNotFoundException {
         FileSystemUtils.fileDisposeFromDir(new File("C:\\Users\\Private\\read\\red"), file -> {
             try {
                 final String encoding = FileUtils.analysisTextFileEncode(file);

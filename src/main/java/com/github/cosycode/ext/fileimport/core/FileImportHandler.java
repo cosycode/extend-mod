@@ -26,6 +26,7 @@ public class FileImportHandler {
      * 从文件中读取数据
      */
     public static void readFromSource(@NonNull InputStream is, String fileName, AbstractFileImportAdapter adapter) {
+        assert getResolver() != null;
         getResolver().resolve(is, fileName, adapter).persistence();
     }
 

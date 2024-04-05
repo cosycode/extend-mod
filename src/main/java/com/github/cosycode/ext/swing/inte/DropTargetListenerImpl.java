@@ -70,11 +70,11 @@ public interface DropTargetListenerImpl extends DropTargetListener {
     }
 
     @Override
-    default void dragEnter(DropTargetDragEvent dtde) {
+    default void dragEnter(DropTargetDragEvent event) {
     }
 
     @Override
-    default void dragOver(DropTargetDragEvent dtde) {
+    default void dragOver(DropTargetDragEvent event) {
     }
 
     @Override
@@ -82,14 +82,14 @@ public interface DropTargetListenerImpl extends DropTargetListener {
     }
 
     @Override
-    default void dropActionChanged(DropTargetDragEvent dtde) {
+    default void dropActionChanged(DropTargetDragEvent event) {
     }
 
     @Override
-    default void drop(DropTargetDropEvent dtde) {
-        final boolean rst = dragHappen(dtde);
+    default void drop(DropTargetDropEvent event) {
+        final boolean rst = dragHappen(event);
         // 如果此次拖拽的数据是被接受的, 则必须设置拖拽完成（否则可能会看到拖拽目标返回原位置, 造成视觉上以为是不支持拖拽的错误效果）
-        dtde.dropComplete(rst);
+        event.dropComplete(rst);
     }
 
     boolean dragHappen(DropTargetDropEvent dropTargetDropEvent);

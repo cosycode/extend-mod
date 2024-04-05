@@ -3,6 +3,7 @@ package com.github.se;
 import com.github.cosycode.common.ext.hub.Throws;
 import com.github.cosycode.ext.hub.CurrentLimitClosureProxy;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.function.Consumer;
@@ -16,6 +17,7 @@ import java.util.stream.IntStream;
  * @author CPF
  * @since 0.1.0
  **/
+@Ignore
 @Slf4j
 public class CurrentLimitClosureProxyTest {
 

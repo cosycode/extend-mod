@@ -21,10 +21,7 @@ public class TypeConverter {
     private TypeConverter(){}
 
     /**
-     *
      * TODO type convert
-     * @param obj
-     * @return
      */
     public static String convertObjToString(Object obj) {
         if (obj == null) {
@@ -44,6 +41,7 @@ public class TypeConverter {
      * 将一个字符串 转换成对应类型,
      * @return 转换成为的字符串类型
      */
+    @SuppressWarnings("unchecked")
     public static <T> T convertStringToObj(String string, Class<T> type) throws ParseException {
         if (type.equals(String.class)) {
             return (T) string;

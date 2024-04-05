@@ -14,9 +14,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class extractAllFieldOnExcel {
+public class extractAllFieldOnExcelTest {
 
-    public static final String path = "E:\\res\\FMBS_DEV_BANK\\新核心改造项目\\接收文档\\定报价平台数据源清单(1)(1).xls";
+    public static final String path = "E:\\res\\test-file.xls";
 
     public static void main(String[] args) throws IOException {
 
@@ -45,14 +45,13 @@ public class extractAllFieldOnExcel {
                                 writer.write(sheetName + "\t" + o + "\n");
                             }
                         } catch (IOException | ParseException e) {
-                            e.printStackTrace();
                             throw new RuntimeException(e);
                         }
                     });
                     try {
                         writer.flush();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        throw new RuntimeException(e);
                     }
                 });
             }

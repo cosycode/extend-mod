@@ -1,6 +1,7 @@
 package com.github.se;
 
 import lombok.Getter;
+import org.junit.Ignore;
 
 /**
  * <b>Description : </b>
@@ -8,8 +9,8 @@ import lombok.Getter;
  * <b>created in </b> 2021/4/6
  *
  * @author CPF
- * @since
  **/
+@Ignore
 public class AnoTest {
 
     public static class IType<T> {

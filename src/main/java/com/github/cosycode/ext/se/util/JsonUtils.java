@@ -102,13 +102,13 @@ public class JsonUtils {
 
     interface JsonParser {
 
-        abstract String toJson(Object obj);
+        String toJson(Object obj);
 
-        abstract String toFormatJson(Object obj);
+        String toFormatJson(Object obj);
 
-        abstract <T> T fromJson(String json, Class<T> classOfT);
+        <T> T fromJson(String json, Class<T> classOfT);
 
-        abstract <T> List<T> fromJsonArray(String json, Class<T> classOfT);
+        <T> List<T> fromJsonArray(String json, Class<T> classOfT);
 
         /**
          * 将 json 转换为 类型 T, 由 operator 处理后, 再转换为 json 返回.

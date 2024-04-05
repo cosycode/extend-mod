@@ -21,8 +21,8 @@ public class HttpHeaderHelper {
 
     public static void jsonHeader(@NonNull Map<String, Object> header) {
         header.computeIfAbsent(HttpHeaders.CONTENT_TYPE, k -> ContentType.APPLICATION_JSON);
-        header.computeIfAbsent(HttpHeaders.ACCEPT_ENCODING, k -> "gzip, x-gzip, deflate");
-        header.computeIfAbsent(HttpHeaders.CONNECTION, k -> "keep-alive");
+        header.putIfAbsent(HttpHeaders.ACCEPT_ENCODING, "gzip, x-gzip, deflate");
+        header.putIfAbsent(HttpHeaders.CONNECTION, "keep-alive");
     }
 
     public static Map<String, Object> jsonHeader() {

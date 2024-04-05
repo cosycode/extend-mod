@@ -63,9 +63,7 @@ public abstract class AbstractObjCacheHandler<T extends ICacheStack> {
             public void put(T value) {
                 File file = new File(filePath);
                 FileSystemUtils.insureFileExist(file);
-                Throws.runtimeEpt(() -> {
-                    IoUtils.writeFile(file.getPath(), JsonUtils.toJson(value).getBytes(StandardCharsets.UTF_8));
-                });
+                Throws.runtimeEpt(() -> IoUtils.writeFile(file.getPath(), JsonUtils.toJson(value).getBytes(StandardCharsets.UTF_8)));
             }
 
             @Override

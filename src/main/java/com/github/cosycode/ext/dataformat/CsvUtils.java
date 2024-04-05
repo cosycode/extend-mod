@@ -1,8 +1,6 @@
 package com.github.cosycode.ext.dataformat;
 
 import com.github.cosycode.common.lang.BaseRuntimeException;
-import com.github.cosycode.common.util.io.FileSystemUtils;
-import com.github.cosycode.ext.se.util.JsonUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -40,8 +38,6 @@ public class CsvUtils {
      *
      * @param csvFile csv 文件 对象
      * @return List<String [ ]> 读取的数据
-     * @throws IOException
-     * @throws CsvException
      */
     public static List<String[]> readCSV(File csvFile) throws IOException, CsvException {
         DataInputStream dataInputStream = new DataInputStream(Files.newInputStream(csvFile.toPath()));
@@ -56,10 +52,6 @@ public class CsvUtils {
      * @param tClass  模版类
      * @param <T>     模版类
      * @return 读取的 list
-     * @throws IOException
-     * @throws CsvException
-     * @throws InstantiationException
-     * @throws IllegalAccessException
      */
     public static <T> List<T> readCsvToBeanList(File csvFile, Class<T> tClass) throws IOException, CsvException, InstantiationException, IllegalAccessException, ParseException {
         List<String[]> strings = readCSV(csvFile);

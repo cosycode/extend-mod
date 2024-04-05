@@ -38,6 +38,6 @@ public interface KeyReleasedListener extends KeyListener {
      * a key released event.
      */
     @Override
-    public void keyReleased(KeyEvent e);
+    void keyReleased(KeyEvent e);
 
 }

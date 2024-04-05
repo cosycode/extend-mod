@@ -27,8 +27,6 @@ public class AllClosureProxy<T, P, R> extends AbstractClosureProxy<T, P, R> {
 
     /**
      * 闭包代理方法: Function
-     *
-     * @param params
      */
     @Override
     public R closureFunction(P params) {

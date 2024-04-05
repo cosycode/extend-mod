@@ -20,16 +20,16 @@ public class ParsedSheetHandler<T> {
      * 存放解析后的excel信息
      */
     @Getter
-    private SheetInfo sheetInfo;
+    private final SheetInfo sheetInfo;
 
     /**
      * 存放数据信息
      */
     @Getter
-    private List<T> dataList;
+    private final List<T> dataList;
 
     @Getter
-    private DbOperateHandle<T> dbOperateHandle;
+    private final DbOperateHandle<T> dbOperateHandle;
 
     public ParsedSheetHandler(SheetInfo sheetInfo, List<T> dataList, DbOperateHandle<T> dbOperateHandle) {
         this.sheetInfo = sheetInfo;

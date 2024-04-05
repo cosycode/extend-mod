@@ -1,6 +1,7 @@
 package com.github.cosycode.ext.swing.comp;
 
 import com.github.cosycode.ext.swing.inte.DropTargetListenerImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -17,6 +18,7 @@ import java.io.IOException;
  *
  * @author CPF
  **/
+@Slf4j
 public class JPathTextField extends JTextField {
 
     public JPathTextField() {
@@ -33,7 +35,7 @@ public class JPathTextField extends JTextField {
                     return true;
                 }
             } catch (IOException | UnsupportedFlavorException e) {
-                e.printStackTrace();
+                log.error("failed to drop file", e);
             }
             return false;
         });
