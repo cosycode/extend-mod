@@ -13,7 +13,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
- * <b>Description : </b> 生产环境推荐一个服务使用一个 Client
+ * <b>Description : </b> recommend that create a single client for per different http service.
  * <p>
  * <b>created in </b> 2023/5/14
  * </p>
@@ -29,33 +29,31 @@ public class MyHttpClient {
         MyHttpClient myHttpClient = new MyHttpClient(Http5ClientConfig.getCloseableHttpClient(), MyHttpResponse.DEFAULT_HANDLER);
         myHttpClient.setWebCacheHandler(null);
         myHttpClient.setPreProcess(req -> log.info("[{}] {}", req.method(), req.requestUrl()));
-        myHttpClient.setSufProcess((req, resp) -> {
+        myHttpClient.setPostProcess((req, resp) -> {
             if (resp.isCode(404)) {
                 log.warn("[{}] {} ==> {}", req.method(), req.requestUrl(), resp.data());
             }
         });
         return myHttpClient;
     });
+    
+    final CloseableHttpClient closeableHttpClient;
     /**
-     * 封装的 Http5Client
+     * used for parsing responses
      */
-    private final CloseableHttpClient closeableHttpClient;
+    final HttpClientResponseHandler<MyHttpResponse> httpClientResponseHandler;
     /**
-     * 用于解析 response
+     * used for cache, whether to use cache, it can be null if you don't need caches
      */
-    private final HttpClientResponseHandler<MyHttpResponse> httpClientResponseHandler;
+    AbstractKeyCacheHandler<MyHttpRequest, MyHttpResponse> webCacheHandler;
     /**
-     * 用于缓存, 是否使用缓存
+     * pre-process: before sending the request, you can do some processing
      */
-    private AbstractKeyCacheHandler<MyHttpRequest, MyHttpResponse> webCacheHandler;
+    Consumer<MyHttpRequest> preProcess;
     /**
-     * 前置处理
+     * post-process: after receiving the response, you can do some processing
      */
-    private Consumer<MyHttpRequest> preProcess;
-    /**
-     * 后置处理
-     */
-    private BiConsumer<MyHttpRequest, MyHttpResponse> sufProcess;
+    BiConsumer<MyHttpRequest, MyHttpResponse> postProcess;
 
     public MyHttpClient(CloseableHttpClient closeableHttpClient, HttpClientResponseHandler<MyHttpResponse> httpClientResponseHandler) {
         this.closeableHttpClient = closeableHttpClient;
@@ -69,21 +67,21 @@ public class MyHttpClient {
                                       AbstractKeyCacheHandler<MyHttpRequest, MyHttpResponse> webCacheHandler,
                                       HttpClientResponseHandler<MyHttpResponse> httpClientResponseHandler,
                                       Consumer<MyHttpRequest> preProcess,
-                                      BiConsumer<MyHttpRequest, MyHttpResponse> sufProcess) throws IOException {
-        // 前置处理
+                                      BiConsumer<MyHttpRequest, MyHttpResponse> postProcess) throws IOException {
+        // pre-processing
         if (preProcess != null) {
             preProcess.accept(myHttpRequest);
         }
-        // 发送请求
+        // send request
         final MyHttpResponse myHttpResponse;
         if (webCacheHandler == null) {
             myHttpResponse = MyHttpClient.doSend(myHttpRequest, closeableHttpClient, httpClientResponseHandler);
         } else {
             myHttpResponse = webCacheHandler.computeIfAbsent(myHttpRequest, () -> MyHttpClient.doSend(myHttpRequest, closeableHttpClient, httpClientResponseHandler), r -> !r.isCode(429));
         }
-        // 后置处理
-        if (sufProcess != null) {
-            sufProcess.accept(myHttpRequest, myHttpResponse);
+        // post-processing
+        if (postProcess != null) {
+            postProcess.accept(myHttpRequest, myHttpResponse);
         }
         return myHttpResponse;
     }
@@ -93,11 +91,8 @@ public class MyHttpClient {
                 request.headers(), request.params(), request.jsonBody(), httpClientResponseHandler);
     }
 
-    /**
-     * 发送之前, 经过 preProcess 进行处理, 之后将消息转给 send 方法
-     */
     public MyHttpResponse send(MyHttpRequest myHttpRequest) throws IOException {
-        return send(myHttpRequest, closeableHttpClient, webCacheHandler, httpClientResponseHandler, preProcess, sufProcess);
+        return send(myHttpRequest, closeableHttpClient, webCacheHandler, httpClientResponseHandler, preProcess, postProcess);
     }
 
     public MyHttpResponse download(MyHttpRequest myHttpRequest, String savePath) throws IOException {

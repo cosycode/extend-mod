@@ -14,7 +14,7 @@ import java.util.Map;
  * <b>created in </b> 2023/1/16
  * </p>
  *
- * @author pengfchen
+ * @author CPF
  * @since 1.0
  **/
 public class HttpHeaderHelper {
@@ -36,10 +36,10 @@ public class HttpHeaderHelper {
         return new HttpHeaderBuilder();
     }
 
+    @Getter
     public static class HttpHeaderBuilder {
 
-        @Getter
-        Map<String, Object> headers = new HashMap<>();
+        final Map<String, Object> headers = new HashMap<>();
 
         public Accept accept() {
             return new Accept();

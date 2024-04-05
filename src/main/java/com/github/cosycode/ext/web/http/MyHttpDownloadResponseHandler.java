@@ -8,6 +8,7 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 
 import java.io.*;
+import java.nio.file.Files;
 
 /**
  * <b>Description : </b>
@@ -33,24 +34,20 @@ public class MyHttpDownloadResponseHandler implements HttpClientResponseHandler<
         downloadResponse.setFilePath(savePath);
         downloadResponse.setFileLength(entity.getContentLength());
         downloadResponse.setStartTime(System.nanoTime());
-        if (entity != null) {
-            downloadResponse.setMessage("start downloading");
-            File file = new File(savePath);
-            FileSystemUtils.insureFileDirExist(file.getParentFile());
-            try (InputStream inputStream = entity.getContent();
-                 OutputStream outputStream = new FileOutputStream(file)) {
-                byte[] buffer = new byte[1024 * 8];
-                int bytesRead;
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, bytesRead);
-                    downloadResponse.addWriteLength(bytesRead);
-                }
+        downloadResponse.setMessage("start downloading");
+        File file = new File(savePath);
+        FileSystemUtils.insureFileDirExist(file.getParentFile());
+        try (InputStream inputStream = entity.getContent();
+             OutputStream outputStream = Files.newOutputStream(file.toPath())) {
+            byte[] buffer = new byte[1024 * 64];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+                downloadResponse.addWriteLength(bytesRead);
             }
-            downloadResponse.setMessage("download success");
-            downloadResponse.setEndTime(System.nanoTime());
-        } else {
-            downloadResponse.setMessage("Empty or non-existent file!");
         }
+        downloadResponse.setMessage("download success");
+        downloadResponse.setEndTime(System.nanoTime());
         return new MyHttpResponse(responseCode, JsonUtils.toJson(downloadResponse));
     }
 

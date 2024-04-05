@@ -1,6 +1,7 @@
 package com.github.cosycode.ext.web.http;
 
 import lombok.Data;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.apache.hc.core5.http.Method;
 
@@ -16,6 +17,7 @@ import java.util.Map;
  **/
 @Data
 @Accessors(fluent = true)
+@ToString
 public class MyHttpRequest {
 
     private String method;

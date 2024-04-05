@@ -28,7 +28,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * <b>Description : </b> http 调用的 工具类, 基于 HttpClient5 较为纯净.
+ * <b>Description : </b> the tool class for http call, based on HttpClient5, more pure.
  * <p>
  * <b>created in </b> 2022/12
  *
@@ -41,7 +41,7 @@ public class HttpUtils {
     }
 
     private static String createRequestUrl(String url, Map<String, String> paramMap) {
-        // Map<String, String> params 转换为 List<BasicNameValuePair> param
+        // convert request params from Map<String, String> params to List<BasicNameValuePair> param
         if (paramMap != null && !paramMap.isEmpty()) {
             List<NameValuePair> paramList = new ArrayList<>();
             for (Map.Entry<String, String> stringEntry : paramMap.entrySet()) {
@@ -65,18 +65,19 @@ public class HttpUtils {
 
     public static <T> T http(CloseableHttpClient httpClient, String method, String requestUrl, Map<String, Object> headers, Map<String, String> params,
                              Object jsonBody, HttpClientResponseHandler<? extends T> responseHandler) throws IOException {
-        // 拼接 url
+        // engage url
         String url = createRequestUrl(requestUrl, params);
-        // 创建 HttpUriRequestBase 对象
+        // create HttpUriRequestBase Object
         HttpUriRequestBase httpUriRequestBase = new HttpUriRequestBase(method, URI.create(url));
-        // Map<String, Object> headers 转换为 List<Header>
+        // Convert style from Map<String, Object> headers to List<Header>
         if (headers != null && !headers.isEmpty()) {
             for (Map.Entry<String, Object> objectEntry : headers.entrySet()) {
                 httpUriRequestBase.addHeader(new BasicHeader(objectEntry.getKey(), objectEntry.getValue()));
             }
         }
+
+        // setting body
         String payload = "";
-        // 设置 body
         if (jsonBody != null) {
             payload = jsonBody instanceof String ? (String) jsonBody : JsonUtils.toJson(jsonBody);
             httpUriRequestBase.setEntity(new StringEntity(payload, StandardCharsets.UTF_8));

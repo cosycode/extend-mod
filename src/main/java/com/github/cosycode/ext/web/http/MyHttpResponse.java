@@ -1,8 +1,6 @@
 package com.github.cosycode.ext.web.http;
 
 import com.github.cosycode.common.lang.BaseRuntimeException;
-import com.github.cosycode.ext.se.json.JsonHelper;
-import com.github.cosycode.ext.se.json.JsonNode;
 import com.github.cosycode.ext.se.util.JsonUtils;
 import lombok.Data;
 import lombok.ToString;
@@ -20,8 +18,6 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
  * <p>
  * <b>created in </b> 2023/1/16
  * </p>
- *
- * @author pengfchen
  **/
 @Data
 @Accessors(fluent = true)
@@ -76,10 +72,6 @@ public class MyHttpResponse {
 
     public boolean isCode(int number) {
         return code == number;
-    }
-
-    public JsonNode toJsonNode() {
-        return JsonHelper.parse(data);
     }
 
 }

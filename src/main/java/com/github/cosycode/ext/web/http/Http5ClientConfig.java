@@ -3,19 +3,24 @@ package com.github.cosycode.ext.web.http;
 import com.github.cosycode.common.ext.hub.LazySingleton;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.Credentials;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.DefaultConnectionKeepAliveStrategy;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.impl.routing.DefaultProxyRoutePlanner;
 import org.apache.hc.client5.http.io.HttpClientConnectionManager;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.util.TimeValue;
 import org.apache.hc.core5.util.Timeout;
-
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.TrustManager;
@@ -32,7 +37,7 @@ import java.util.concurrent.TimeUnit;
  * <b>created in </b> 2022/12/27
  * </p>
  *
- * @author pengfchen
+ * @author CPF
  * @since 1.0
  **/
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -56,6 +61,43 @@ public class Http5ClientConfig {
         return defaultHttpClientBuilder().build();
     }
 
+    /**
+     * HttpClient 5 Basic Authorization
+     *
+     * <p>
+     *    <a href="https://hc.apache.org/httpcomponents-client-5.2.x/quickstart.html">quickstart</a>
+     * </p>
+     * @param proxyServerDomain proxy ip or domain
+     * @param port proxy port
+     * @param username Basic Authorization username
+     * @param password Basic Authorization password
+     * @return HttpClientBuilder
+     */
+    public static HttpClientBuilder geneHttpClientBuilderWithBasicProxyAuthorization(String proxyServerDomain, int port, String username, String password) {
+        // build DefaultCredentialsProvider
+        AuthScope authScope = new AuthScope(proxyServerDomain, port);
+        Credentials proxyCredentials = new UsernamePasswordCredentials(username, password.toCharArray());
+        BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        credentialsProvider.setCredentials(authScope, proxyCredentials);
+        // build Client
+        final HttpHost proxy = new HttpHost(proxyServerDomain, port);
+        final DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
+        return defaultHttpClientBuilder().setDefaultCredentialsProvider(credentialsProvider).setRoutePlanner(routePlanner);
+    }
+
+    /**
+     * HttpClient 5 Base on Proxy
+     * @param proxyServerDomain proxy ip or domain
+     * @param port proxy port
+     * @return HttpClientBuilder
+     */
+    public static HttpClientBuilder geneHttpClientBuilderWithProxy(String proxyServerDomain, int port) {
+        return defaultHttpClientBuilder().setProxy(new HttpHost(proxyServerDomain, port));
+    }
+
+    /**
+     * @return default HttpClientBuilder
+     */
     public static HttpClientBuilder defaultHttpClientBuilder() {
         return HttpClientBuilder.create()
                 .setConnectionManager(defaultHttpClientConnectionManager())
@@ -92,9 +134,7 @@ public class Http5ClientConfig {
     }
 
     /**
-     * 自定义 ssl check.
-     * <p>
-     * 跳过 ssl 认证, 解决报错 sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+     * custom ssl check, to skip the authentication of ssl, to avoid the exception: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
      */
     @SuppressWarnings("all")
     public static SSLConnectionSocketFactory getSSLFactory() {

@@ -5,10 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.core5.http.Method;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * <b>Description : </b> http 调用的 工具类
+ * <b>Description : </b> utils for http
  * <p>
  * <b>created in </b> 2022/12
  *
@@ -42,27 +43,53 @@ public class HttpHelper {
 
     public static class MyHttpRequestHelper extends MyHttpRequest {
 
+        @Override
+        public MyHttpRequestHelper method(String method) {
+            super.method(method);
+            return this;
+        }
+
+        @Override
+        public MyHttpRequestHelper headers(Map<String, Object> headers) {
+            super.headers(headers);
+            return this;
+        }
+
+        @Override
+        public MyHttpRequestHelper requestUrl(String requestUrl) {
+            super.requestUrl(requestUrl);
+            return this;
+        }
+
+        @Override
+        public MyHttpRequestHelper params(Map<String, String> params) {
+            super.params(params);
+            return this;
+        }
+
+        @Override
+        public MyHttpRequestHelper jsonBody(Object jsonBody) {
+            super.jsonBody(jsonBody);
+            return this;
+        }
+
         public MyHttpRequestHelper(String method, String requestUrl) {
             super(method, requestUrl);
         }
 
-        /**
-         * 发送请求之前事项
-         */
-        public MyHttpResponse send(@NonNull Consumer<MyHttpRequest> consumer) throws IOException {
-            return MyHttpClient.send(this, Http5ClientConfig.getCloseableHttpClient(), null, MyHttpResponse.DEFAULT_HANDLER, consumer, null);
+        public MyHttpResponse send() throws IOException {
+            return send(null);
         }
 
-        /**
-         * 发送请求之前事项
-         */
+        public MyHttpResponse send(Consumer<MyHttpRequest> consumer) throws IOException {
+            final MyHttpClient instance = MyHttpClient.DEFAULT_INSTANCE.instance();
+            return MyHttpClient.send(this, instance.closeableHttpClient, instance.webCacheHandler, MyHttpResponse.DEFAULT_HANDLER, consumer, instance.postProcess);
+        }
+
         public MyHttpResponse sendBy(@NonNull MyHttpClient client) throws IOException {
             return client.send(this);
         }
 
-        /**
-         * 发送请求之前事项
-         */
         public MyHttpResponse sendBy() throws IOException {
             return MyHttpClient.DEFAULT_INSTANCE.instance().send(this);
         }
