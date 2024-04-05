@@ -9,7 +9,7 @@ import com.google.gson.JsonNull;
  * <b>created in </b> 2023/2/21
  * </p>
  *
- * @author pengfchen
+ * @author CPF
  * @since 0.2.3
  **/
 public interface JsonNul extends JsonNode {

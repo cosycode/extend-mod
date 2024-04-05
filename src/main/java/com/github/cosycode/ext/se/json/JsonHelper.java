@@ -8,7 +8,7 @@ import com.google.gson.JsonElement;
  * <b>created in </b> 2023/2/10
  * </p>
  *
- * @author pengfchen
+ * @author CPF
  * @since
  **/
 public abstract class JsonHelper {

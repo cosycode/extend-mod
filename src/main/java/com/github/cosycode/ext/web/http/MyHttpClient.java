@@ -4,6 +4,7 @@ import com.github.cosycode.common.ext.hub.LazySingleton;
 import com.github.cosycode.ext.io.cache.AbstractKeyCacheHandler;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
@@ -23,6 +24,7 @@ import java.util.function.Consumer;
 @Slf4j
 @Setter
 @Getter
+@Accessors(chain = true)
 public class MyHttpClient {
 
     public static final LazySingleton<MyHttpClient> DEFAULT_INSTANCE = LazySingleton.of(() -> {
@@ -36,7 +38,7 @@ public class MyHttpClient {
         });
         return myHttpClient;
     });
-    
+
     final CloseableHttpClient closeableHttpClient;
     /**
      * used for parsing responses

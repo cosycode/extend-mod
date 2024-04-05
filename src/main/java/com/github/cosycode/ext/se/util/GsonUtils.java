@@ -10,7 +10,7 @@ import lombok.NonNull;
  * <b>created in </b> 2022/12/8
  * </p>
  *
- * @author pengfchen
+ * @author CPF
  * @since 0.2.2
  **/
 public class GsonUtils {
