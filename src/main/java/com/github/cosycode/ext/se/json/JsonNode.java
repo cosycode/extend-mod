@@ -279,7 +279,7 @@ public interface JsonNode {
             char c = tempExpression.charAt(idx);
             if (c == '[') {
                 if (tempExpression.charAt(idx + 1) == ']') {
-                    throw new BaseRuntimeException("分段为空 [] " + expression);
+                    throw new BaseRuntimeException("Segment is empty [] " + expression);
                 }
                 // array
                 int leftCnt = 1;
@@ -298,33 +298,33 @@ public interface JsonNode {
                     }
                 }
                 if (i >= len) {
-                    throw new BaseRuntimeException("解析数组失败: expression: %s, successPart: %s, fail: %s", expression, list, expression.substring(idx));
+                    throw new BaseRuntimeException("Failed to parse array: expression: %s, successPart: %s, fail: %s", expression, list, expression.substring(idx));
                 }
                 continue;
             }
             if (c != '.') {
-                throw new BaseRuntimeException("分段首位不为 . 也不为 [, 解析复杂key失败: expression: %s, successPart: %s, fail: %s", expression, list, expression.substring(idx));
+                throw new BaseRuntimeException("The first character of the segment is neither '.' nor '[', so parsing of complex key fails.: expression: %s, successPart: %s, fail: %s", expression, list, expression.substring(idx));
             }
             idx++;
             if (idx >= len) {
-                throw new BaseRuntimeException("末尾为点");
+                throw new BaseRuntimeException("End with a dot");
             }
             c = tempExpression.charAt(idx);
             if (c == '"') {
                 if (tempExpression.charAt(idx + 1) == '"') {
-                    throw new BaseRuntimeException("分段为空 \"\" " + expression);
+                    throw new BaseRuntimeException("Segment is empty \"\" " + expression);
                 }
                 // object "p1.p2.p3"
                 int tmp = tempExpression.indexOf('"', idx + 1);
                 if (tmp < 0) {
-                    throw new BaseRuntimeException("解析复杂key失败: expression: %s, successPart: %s, fail: %s", expression, list, expression.substring(idx));
+                    throw new BaseRuntimeException("Failed to parse complex key: expression: %s, successPart: %s, fail: %s", expression, list, expression.substring(idx));
                 }
                 list.add(DoubleBean.of(Object.class.getSimpleName(), expression.substring(idx + 1, tmp)));
                 idx = tmp + 1;
             } else {
                 // object "p1.p2.p3", 首位不应该为 .
                 if (c == '.' || c == '[') {
-                    throw new BaseRuntimeException("分段解析失败, 发现两个连续的.. ., expression: %s, successPart: %s, fail: %s", expression, list, expression.substring(idx));
+                    throw new BaseRuntimeException("Segment parsing failed, found two consecutive .. ., expression: %s, successPart: %s, fail: %s", expression, list, expression.substring(idx));
                 }
                 int tmpP = tempExpression.indexOf('.', idx);
                 int tmpL = tempExpression.indexOf("[", idx);
@@ -349,7 +349,7 @@ public interface JsonNode {
             }
         }
         if (idx != len) {
-            throw new BaseRuntimeException("解析表达式失败: expression: %s, successPart: %s", expression, list);
+            throw new BaseRuntimeException("Failed to parse expression: expression: %s, successPart: %s", expression, list);
         }
         return list;
     }

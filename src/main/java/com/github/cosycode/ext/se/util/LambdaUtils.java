@@ -1,6 +1,7 @@
 package com.github.cosycode.ext.se.util;
 
 import com.github.cosycode.common.ext.hub.Throws;
+import com.github.cosycode.common.lang.NotSupportException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -51,7 +52,7 @@ public class LambdaUtils {
         } else if (declaredMethods.length == 1) {
             method = declaredMethods[0];
         } else {
-            throw new IllegalArgumentException("TODO 需要处理多个");
+            throw new IllegalArgumentException("not support multi method in lambda object");
         }
         final Class<?>[] parameterTypes = method.getParameterTypes();
         final int length = parameterTypes.length;
@@ -64,7 +65,7 @@ public class LambdaUtils {
             } else if (length == 2) {
                 return BiConsumer.class;
             } else {
-                throw new RuntimeException("fjkd");
+                throw new NotSupportException("not support this lambda type");
             }
         } else {
             if (length == 0) {
@@ -74,7 +75,7 @@ public class LambdaUtils {
             } else if (length == 2) {
                 return BiFunction.class;
             } else {
-                throw new RuntimeException("fjkfdfddd");
+                throw new NotSupportException("not support this lambda type");
             }
         }
     }

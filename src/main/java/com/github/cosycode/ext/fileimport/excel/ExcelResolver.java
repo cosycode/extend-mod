@@ -41,7 +41,7 @@ public class ExcelResolver {
         } else if (excelType == ExcelType.XLSX) {
             return new XSSFWorkbook(in);
         }
-        throw new BaseRuntimeException("不支持的文件类型");
+        throw new BaseRuntimeException("Unsupported file type");
     }
 
     /**
@@ -102,7 +102,7 @@ public class ExcelResolver {
                     continue;
                 }
                 if (collect.size() > 1) {
-                    throw new BaseRuntimeException("函数调用错误, AbstractSheetBeanMappingAdapter 冲突, resolveQuoteExcel 解析时发现匹配的 SheetBeanMapping 有多个");
+                    throw new BaseRuntimeException("Function call error, AbstractSheetBeanMappingAdapter conflict, resolveQuoteExcel found multiple matching SheetBeanMappings during parsing");
                 }
                 AbstractSheetBeanMappingAdapter<?> relateAdapter = collect.get(0);
                 SheetInfo sheetInfo = new SheetInfo();
@@ -158,7 +158,7 @@ public class ExcelResolver {
         // 检查映射字段是否有异常情况, 是否有缺少
         List<String> notFoundHeaderName = sheetBeanMappingRule.getNotFoundHeaderName();
         if (!notFoundHeaderName.isEmpty()) {
-            final String temp = "excel中未发现必要的列, 请检查模板, <br> => 表名 : %s<br> => 列 : [%s]";
+            final String temp = "The required columns were not found in excel, please check the template, <br> => Table name: %s<br> => Column: [%s]";
             String msg = String.format(temp, sheetName, StringUtils.join(notFoundHeaderName, ", "));
             log.warn(msg);
             throw new BaseRuntimeException(msg);
@@ -213,11 +213,11 @@ public class ExcelResolver {
                     return;
                 }
                 if (fieldMapping.isRequire()) {
-                    throw new ParseException("不能为空", 0);
+                    throw new ParseException("cannot be empty", 0);
                 }
             } catch (RuntimeException | ParseException e) {
                 CellAddress cellAddress = new CellAddress(sheetRow.getRowNum(), colIndex);
-                String msg = String.format("解析单元格错误<br>=> 表名 : %s<br>=> 位置 : %s<br>=> 值 : %s<br>=> error : %s", sheetName, cellAddress, cell,
+                String msg = String.format("Error parsing cell<br>=> Table name: %s<br>=> Position: %s<br>=> Value : %s<br>=> error : %s", sheetName, cellAddress, cell,
                         e.getMessage());
                 String desc = String.format("regex : %s", fieldMapping.getRuleRegex());
                 throw new BaseRuntimeException(msg + desc);

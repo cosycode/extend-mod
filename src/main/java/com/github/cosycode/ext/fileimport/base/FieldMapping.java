@@ -132,7 +132,7 @@ public class FieldMapping<T> {
                 return getDbSaveValue(strVal);
             }
             if (pattern != null && !checkRegex(strVal)) {
-                throw new ParseException("数据规则验证失败", 0);
+                throw new ParseException("Data rule validation failed", 0);
             }
             return strVal;
         }
@@ -155,7 +155,7 @@ public class FieldMapping<T> {
         if (Arrays.asList(codeArr).contains(value)) {
             return value;
         }
-        throw new ParseException("未找到相匹配的数据字典项", 0);
+        throw new ParseException("No matching data dictionary entry found", 0);
     }
 
 }

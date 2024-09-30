@@ -89,7 +89,7 @@ public class JTextAreaAppender extends AbstractAppender {
             layout = PatternLayout.createDefaultLayout();
         }
         if (defaultJTextPane == null) {
-            throw new RuntimeException("事先请配置好 defaultJTextPane");
+            throw new RuntimeException("Please configure defaultJTextPane in advance");
         } else {
             return new JTextAreaAppender(name, filter, layout, ignoreExceptions, defaultJTextPane);
         }

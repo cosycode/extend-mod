@@ -183,7 +183,7 @@ public class KeyPressUtils {
                 }
                 sb.append(c);
                 if (Character.isLowSurrogate(c)) {
-                    log.warn("无法输出字符: {}", sb);
+                    log.warn("cannot print characters: {}", sb);
                     sb.setLength(0);
                 }
                 continue;

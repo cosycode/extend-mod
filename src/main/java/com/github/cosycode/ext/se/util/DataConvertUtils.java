@@ -40,7 +40,7 @@ public class DataConvertUtils {
             }
             byte[] bytes = new byte[(int) length];
             final int read = in.read(bytes);
-            Validate.isTrue(read == length, "文件读取长度和文件自身长度不匹配");
+            Validate.isTrue(read == length, "The length of the file read does not match the length of the file itself");
             return Base64.getEncoder().encodeToString(bytes);
         }
     }
@@ -54,8 +54,8 @@ public class DataConvertUtils {
      */
     //
     public static void base64ToFile(String base64, String savePath) throws IOException {
-        Validate.isTrue(StringUtils.isNotBlank(base64), "base64字符串不能为空");
-        Validate.isTrue(StringUtils.isNotBlank(savePath), "存储路径savePath不能为空");
+        Validate.isTrue(StringUtils.isNotBlank(base64), "The base64 string cannot be empty");
+        Validate.isTrue(StringUtils.isNotBlank(savePath), "The storage path savePath cannot be empty");
         FileSystemUtils.insureFileExist(new File(savePath));
         byte[] bytes = Base64.getDecoder().decode(base64);
         IoUtils.writeFile(savePath, bytes);

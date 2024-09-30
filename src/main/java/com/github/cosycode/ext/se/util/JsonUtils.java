@@ -76,7 +76,7 @@ public class JsonUtils {
         if (sortJson.equals(sortJsonAfter)) {
             return t;
         }
-        throw new BaseRuntimeException("json 转换成 classOf T, 信息丢失, \n原来的 json: %s, 排序后的json: %s, \n转换成 %s 后的json: %s",
+        throw new BaseRuntimeException("json converted to classOf T, information lost,\noriginal json: %s, sorted json: %s,\njson converted to %s: %s",
                 json, sortJson, classOfT.getName(), sortJsonAfter);
     }
 
@@ -96,7 +96,7 @@ public class JsonUtils {
         if (sortJson.equals(sortJsonAfter)) {
             return tList;
         }
-        throw new BaseRuntimeException("json 转换成 classOf T, 信息丢失, \n原来的 json: %s, 排序后的json: %s, \n转换成 List<%s> 后的json: %s",
+        throw new BaseRuntimeException("json converted to classOf T, information lost,\noriginal json: %s, sorted json: %s,\njson converted to List<%s>: %s",
                 json, sortJson, classOfT.getName(), sortJsonAfter);
     }
 

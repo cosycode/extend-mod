@@ -55,7 +55,7 @@ public class ObjCacheChain<T extends ICacheStack> {
     private T getData(@NonNull Iterator<AbstractObjCacheHandler<T>> iterator) {
         if (! iterator.hasNext()) {
             // 假如说最后 一级从 http 上面获取, 那么若该级别的 get 获取不到合法数据, 那么还应该有下一级.
-            throw new BaseRuntimeException("cacheHandlerList 里面已经空了, 请确保最后一个 AbstractCacheHandler<T> 实例对象可以正确获取到元素");
+            throw new BaseRuntimeException("The cacheHandlerList is empty. Please make sure that the last AbstractCacheHandler<T> instance object can correctly obtain the element.");
         }
         /* 若是获取到元素则返回, */
         AbstractObjCacheHandler<T> item = iterator.next();
@@ -65,14 +65,14 @@ public class ObjCacheChain<T extends ICacheStack> {
             if (validate) {
                 return pop;
             } else {
-                log.debug("{}[{}] 中获取到的元素验证失败, 清除失效元素", item.getClass(), item.getTag());
+                log.debug("{}[{}] clear the invalid element", item.getClass(), item.getTag());
                 item.clear();
             }
         }
         pop = getData(iterator);
         // 从下一个 AbstractCacheHandler<T> 获取到的元素不应该为 null
         Objects.requireNonNull(pop);
-        log.debug("获取到有效元素, 将有效元素缓存进 {}[{}]", item.getClass(), item.getTag());
+        log.debug("Get the valid elements and cache them in {}[{}]", item.getClass(), item.getTag());
         item.put(pop);
         return pop;
     }

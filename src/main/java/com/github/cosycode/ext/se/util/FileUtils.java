@@ -76,10 +76,8 @@ public class FileUtils {
                 }
             }
             return charset;
-        } catch (FileNotFoundException e) {
-            log.error("找不到指定文件", e);
         } catch (IOException e) {
-            log.error("读取文件失败", e);
+            log.error("", e);
         }
         return "null";
     }

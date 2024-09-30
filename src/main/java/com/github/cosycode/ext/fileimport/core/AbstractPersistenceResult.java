@@ -17,6 +17,6 @@ public abstract class AbstractPersistenceResult {
 
     @Override
     public String toString() {
-        return map.entrySet().stream().map(entry -> String.format("<br> =>sheet : %s --> 导入了 %s 条数据", entry.getKey(), entry.getValue())).collect(Collectors.joining(""));
+        return map.entrySet().stream().map(entry -> String.format("<br> =>sheet : %s --> imported %s records", entry.getKey(), entry.getValue())).collect(Collectors.joining(""));
     }
 }

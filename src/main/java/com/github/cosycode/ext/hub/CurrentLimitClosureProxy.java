@@ -39,7 +39,7 @@ public class CurrentLimitClosureProxy<T, P, R> extends AbstractClosureProxy<T, P
 
     private void check(int limit) {
         if (limit <= 0) {
-            throw new IllegalArgumentException("limit 不能小于 1");
+            throw new IllegalArgumentException("limit cannot less than 1");
         }
     }
 
@@ -49,7 +49,7 @@ public class CurrentLimitClosureProxy<T, P, R> extends AbstractClosureProxy<T, P
             semaphore.acquire();
             biFunction.apply(functional, params);
         } catch (InterruptedException e) {
-            log.error("获取信号失败 params: " + params, e);
+            log.error("Failed to get signal, params: " + params, e);
             Thread.currentThread().interrupt();
         } finally {
             semaphore.release();
